@@ -7,3 +7,4 @@ psycopg2-binary==2.9.6
 websockets==10.4  # Updated to a compatible version
 httpx==0.23.0
 python-dotenv==1.0.0
+passlib[bcrypt]
