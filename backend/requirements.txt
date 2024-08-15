@@ -4,7 +4,6 @@ mangum==0.14.0
 pydantic==1.10.8
 sqlalchemy==2.0.12
 psycopg2-binary==2.9.6  # PostgreSQL adapter for SQLAlchemy
-databases==0.7.1       # Optional: Only if you're using async database operations
 httpx==0.23.0
 python-dotenv==1.0.0
 websockets==10.3
