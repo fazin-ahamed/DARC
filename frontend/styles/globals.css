@@ -17,3 +17,27 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* Add any additional styling for the signup page here */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+button {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005bb5;
+}
+
