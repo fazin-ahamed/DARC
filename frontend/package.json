@@ -11,7 +11,7 @@
     "react-router-dom": "^6.11.0",
     "react-scripts": "5.0.1",
     "axios": "^1.4.0",
-    "socket.io-client": "^4.5.4"  // For WebSocket support
+    "socket.io-client": "^4.5.4" // For WebSocket support
   },
   "scripts": {
     "start": "react-scripts start",
