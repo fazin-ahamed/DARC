@@ -2,21 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/build"
-      }
+      "src": "package.json",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "https://darc.onrender.com/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/build/$1"
     }
   ]
 }
