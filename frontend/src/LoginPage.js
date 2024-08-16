@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './LoginPage.css'; // Import CSS file for LoginPage
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ function LoginPage() {
   };
 
   return (
-    <div>
+    <div className="login-page">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -29,15 +30,17 @@ function LoginPage() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
         />
-        <button type="submit">Login</button>
-        {error && <p>{error}</p>}
+        <button type="submit" className="submit-button">Login</button>
+        {error && <p className="error-message">{error}</p>}
       </form>
     </div>
   );
