@@ -28,13 +28,14 @@ app.add_middleware(
 
 # Include the auth router
 app.include_router(auth.router)
+app.include_router(dashboard_router)
 
 # Create all database tables
 Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the API"}
+    return {"message": "Welcome to the DARC API"}
 
 
 @app.post("/register", response_model=schemas.UserResponse)
