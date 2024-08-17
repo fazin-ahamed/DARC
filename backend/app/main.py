@@ -1,19 +1,31 @@
 from fastapi import FastAPI
-from .database import Base, engine
-from .routes import auth
+from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+from .routers import auth
+from .database import engine
+from .models import Base
+
+load_dotenv()  # Load environment variables
 
 app = FastAPI()
 
-# Create the database tables
+# Set up CORS
+origins = [
+    "http://localhost:3000",  # Local development
+    "https://your-frontend-domain.vercel.app",  # Vercel frontend domain
+    "https://your-backend-domain.onrender.com"  # Render backend domain
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include the auth router
+app.include_router(auth.router, prefix="/auth")
+
+# Create all database tables
 Base.metadata.create_all(bind=engine)
-
-# Include routes
-app.include_router(auth.router)
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the SaaS application"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
