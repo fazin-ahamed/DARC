@@ -28,7 +28,7 @@ app.add_middleware(
 
 # Include the auth router
 app.include_router(auth.router)
-app.include_router(dashboard_router)
+app.include_router(dashboard.router)
 
 # Create all database tables
 Base.metadata.create_all(bind=engine)
