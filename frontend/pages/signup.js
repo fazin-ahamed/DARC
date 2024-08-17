@@ -10,7 +10,7 @@ export default function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_SIGNUP_URL}`, { username, password });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}`, { type = "register", username, password });
             localStorage.setItem('token', response.data.access_token);
             router.push('/login');
         } catch (error) {
