@@ -6,6 +6,7 @@ export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
+    const type = "register"
 
     const handleSubmit = async (event) => {
         event.preventDefault();
