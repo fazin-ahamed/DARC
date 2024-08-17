@@ -36,7 +36,7 @@ Base.metadata.create_all(bind=engine)
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the API"}
-)
+
 
 @app.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
