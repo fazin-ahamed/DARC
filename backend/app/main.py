@@ -1,9 +1,11 @@
-from fastapi import FastAPI[all]
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth
 from . import models, schemas, crud
 from .database import get_db, engine, Base
+from .security import verify_password 
 
 load_dotenv()  # Load environment variables
 
