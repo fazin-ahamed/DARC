@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth
+from .routers import auth, dashboard
 from . import models, schemas, crud
 from .database import get_db, engine, Base
 from .security import verify_password 
