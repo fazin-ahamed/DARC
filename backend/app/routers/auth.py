@@ -32,7 +32,7 @@ def login(user: schemas.UserResponse, db: Session = Depends(get_db)):
             raise HTTPException(status_code=400, detail="Invalid credentials")
         
         token = security.create_access_token(data={"sub": db_user.username})
-        return {"access_token": token, "token_type": "bearer"}
+        return {"status": "Login Successful", "access_token": token, "token_type": "bearer"}
     except Exception as e:
         logger.error(f"Login failed: {e}")
         raise HTTPException(status_code=500, detail="Login failed")
