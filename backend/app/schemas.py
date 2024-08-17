@@ -10,5 +10,8 @@ class UserResponse(BaseModel):
     username: str
     email: str
 
+class UserOut(UserResponse):
+    id: int
+
     class Config:
         orm_mode = True
