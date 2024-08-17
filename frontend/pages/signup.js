@@ -12,7 +12,7 @@ export default function Login() {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, { username, password });
             localStorage.setItem('token', response.data.access_token);
-            router.push('/');
+            router.push('/login');
         } catch (error) {
             console.error('Signup failed:', error);
         }
