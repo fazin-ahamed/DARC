@@ -8,4 +8,4 @@ websockets==10.4  # Updated to a compatible version
 httpx==0.23.0
 python-dotenv==1.0.0
 passlib[bcrypt]
-jose
+python-jose==3.3.0
