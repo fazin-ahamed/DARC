@@ -9,7 +9,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_ENDPOINT}/login`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
         username,
         password,
       })
