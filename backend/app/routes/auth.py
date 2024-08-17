@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import models, schemas, security
@@ -5,34 +6,33 @@ from ..database import get_db
 
 router = APIRouter()
 
-@router.post("/auth/register", response_model=schemas.UserOut)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@router.post("/register", response_model=schemas.UserOut)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     try:
-        # Hash the password and create a new user
+        if db.query(models.User).filter(models.User.username == user.username).first():
+            raise HTTPException(status_code=400, detail="Username already registered")
         hashed_password = security.get_password_hash(user.password)
         db_user = models.User(username=user.username, email=user.email, hashed_password=hashed_password)
-        
-        # Add and commit the new user to the database
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
         return db_user
     except Exception as e:
-        # Handle exceptions with appropriate status code
-        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+        logger.error(f"Registration failed: {e}")
+        raise HTTPException(status_code=500, detail="Registration failed")
 
-@router.post("/auth/login")
+@router.post("/login")
 def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Query the database for the user
-    db_user = db.query(models.User).filter(models.User.username == user.username).first()
-    
-    if not db_user:
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    
-    # Verify the provided password
-    if not security.verify_password(user.password, db_user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    
-    # Generate a token or session info (example token returned)
-    token = security.create_access_token(data={"sub": db_user.username})
-    return {"access_token": token, "token_type": "bearer"}
+    try:
+        db_user = db.query(models.User).filter(models.User.username == user.username).first()
+        if not db_user or not security.verify_password(user.password, db_user.hashed_password):
+            raise HTTPException(status_code=400, detail="Invalid credentials")
+        
+        token = security.create_access_token(data={"sub": db_user.username})
+        return {"access_token": token, "token_type": "bearer"}
+    except Exception as e:
+        logger.error(f"Login failed: {e}")
+        raise HTTPException(status_code=500, detail="Login failed")
