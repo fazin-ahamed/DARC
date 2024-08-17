@@ -9,7 +9,7 @@ httpx==0.23.0
 python-dotenv==1.0.0
 passlib[bcrypt]
 python-jose==3.3.0
-tensorflow==2.14.0  # For AI models
-matplotlib==3.7.1   # For plotting
-transformers==4.30.0
-torch==2.0.1
+tensorflow  # For AI models
+matplotlib   # For plotting
+transformers
+torch
