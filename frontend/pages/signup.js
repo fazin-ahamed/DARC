@@ -6,12 +6,11 @@ export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
-    const type = "register"
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}`, { type = "register", username, password });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}`, { username, password });
             localStorage.setItem('token', response.data.access_token);
             router.push('/login');
         } catch (error) {
