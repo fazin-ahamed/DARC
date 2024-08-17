@@ -25,7 +25,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Registration failed")
 
 @router.post("/login")
-def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def login(user: schemas.UserResponse, db: Session = Depends(get_db)):
     try:
         db_user = db.query(models.User).filter(models.User.username == user.username).first()
         if not db_user or not security.verify_password(user.password, db_user.hashed_password):
