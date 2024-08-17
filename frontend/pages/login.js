@@ -10,6 +10,7 @@ export default function Login() {
     e.preventDefault()
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_LOGIN_URL}`, {
+        type = "login",
         username,
         password,
       })
