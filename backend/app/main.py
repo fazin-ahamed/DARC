@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth
-from . import models, schemas, crud, database
+from . import models, schemas, crud
+from .database import get_db, engine, Base
 
 load_dotenv()  # Load environment variables
 
