@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -11,63 +10,83 @@ const Dashboard = () => {
     const [optimizedCode, setOptimizedCode] = useState('');
 
     const handleAnalyze = async () => {
-        const response = await fetch('/api/analyze', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, language }),
-        });
-        const result = await response.json();
-        setAnalysisResults(result.suggestions);
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+            const result = await response.json();
+            setAnalysisResults(result.suggestions);
+        } catch (error) {
+            console.error('Error analyzing code:', error);
+        }
     };
 
     const handleComplexity = async () => {
-        const response = await fetch('/api/complexity', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, language }),
-        });
-        const result = await response.json();
-        setComplexity(result.complexity_score);
+        try {
+            const response = await fetch('/api/complexity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+            const result = await response.json();
+            setComplexity(result.complexity_score);
+        } catch (error) {
+            console.error('Error analyzing complexity:', error);
+        }
     };
 
     const handleReview = async () => {
-        const response = await fetch('/api/review', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, language }),
-        });
-        const result = await response.json();
-        setReviewComments(result.comments);
+        try {
+            const response = await fetch('/api/review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+            const result = await response.json();
+            setReviewComments(result.comments);
+        } catch (error) {
+            console.error('Error generating review comments:', error);
+        }
     };
 
     const handleOptimize = async () => {
-        const response = await fetch('/api/optimize', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, language }),
-        });
-        const result = await response.json();
-        setOptimizedCode(result.optimized_code);
+        try {
+            const response = await fetch('/api/optimize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+            const result = await response.json();
+            setOptimizedCode(result.optimized_code);
+        } catch (error) {
+            console.error('Error optimizing code:', error);
+        }
     };
 
     const handleProfile = async () => {
-        const response = await fetch('/api/profile', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, language }),
-        });
-        const result = await response.json();
-        setPerformance(result.performance);
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code, language }),
+            });
+            const result = await response.json();
+            setPerformance(result.performance);
+        } catch (error) {
+            console.error('Error profiling code performance:', error);
+        }
     };
 
     return (
@@ -78,6 +97,7 @@ const Dashboard = () => {
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="Enter your code here"
                 rows="10"
+                cols="50"
             />
             <select value={language} onChange={(e) => setLanguage(e.target.value)}>
                 <option value="python">Python</option>
