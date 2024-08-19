@@ -10,8 +10,11 @@ const Dashboard = () => {
     const [performance, setPerformance] = useState(null);
     const [optimizedCode, setOptimizedCode] = useState('');
 
+    // Get the API base URL from the environment variable
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
     const handleAnalyze = async () => {
-        const response = await fetch('/api/analyze', {
+        const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,7 +26,7 @@ const Dashboard = () => {
     };
 
     const handleComplexity = async () => {
-        const response = await fetch('/api/complexity', {
+        const response = await fetch(`${API_BASE_URL}/complexity`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,7 +38,7 @@ const Dashboard = () => {
     };
 
     const handleReview = async () => {
-        const response = await fetch('/api/review', {
+        const response = await fetch(`${API_BASE_URL}/review`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -47,7 +50,7 @@ const Dashboard = () => {
     };
 
     const handleOptimize = async () => {
-        const response = await fetch('/api/optimize', {
+        const response = await fetch(`${API_BASE_URL}/optimize`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +62,7 @@ const Dashboard = () => {
     };
 
     const handleProfile = async () => {
-        const response = await fetch('/api/profile', {
+        const response = await fetch(`${API_BASE_URL}/profile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -86,11 +89,7 @@ const Dashboard = () => {
                 <option value="go">Go</option>
                 <option value="ruby">Ruby</option>
                 <option value="php">PHP</option>
-                <option value="csharp">C#</option>
-                <option value="swift">Swift</option>
-                <option value="typescript">TypeScript</option>
-                <option value="scala">Scala</option>
-                <option value="kotlin">Kotlin</option>
+                {/* Add options for the additional languages */}
             </select>
             <button onClick={handleAnalyze}>Analyze Code</button>
             <button onClick={handleComplexity}>Analyze Complexity</button>
