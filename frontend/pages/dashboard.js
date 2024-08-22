@@ -1,5 +1,5 @@
-import React, { useState ,  useEffect } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider} from '@geist-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/react';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import python from 'highlight.js/lib/languages/python';
@@ -8,12 +8,12 @@ import ruby from 'highlight.js/lib/languages/ruby';
 import php from 'highlight.js/lib/languages/php';
 import go from 'highlight.js/lib/languages/go';
 
-hljs.registerLanguage('javascript', javascript)
-hljs.registerLanguage('python', python)
-hljs.registerLanguage('java', java)
-hljs.registerLanguage('ruby', ruby)
-hljs.registerLanguage('php', php)
-hljs.registerLanguage('go', go)
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('java', java);
+hljs.registerLanguage('ruby', ruby);
+hljs.registerLanguage('php', php);
+hljs.registerLanguage('go', go);
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -38,13 +38,11 @@ const Dashboard = () => {
     }
 
     function reformatCode(content) {
-
         let formattedCode = content.replace(/\\n/g, '\n');
         formattedCode = formattedCode.replace(/\\\\/g, '\\');
         formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
         formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
         formattedCode = formattedCode.trim();
-
         return formattedCode;
     }
 
@@ -109,24 +107,19 @@ const Dashboard = () => {
             const formattedProfileCode = reformatCode(result.performance);
             setPerformance(formattedProfileCode);
         }
-        
     };
 
-    // Define the HighlightCode component outside of the JS block
-    const HighlightCode = ({ content }) => {
-        const script = code;
-        const highlightedCode = hljs.highlight(script, { language: {language}}).value;
+    const HighlightCode = ({ content, language }) => {
+        const highlightedCode = hljs.highlight(content, { language }).value;
 
         return (
-            <div>
-                <div
-                    dangerouslySetInnerHTML={{
-                        __html: highlightedCode,
-                        }}
-                    />
-            </div>
-            );
-        };
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: highlightedCode,
+                }}
+            />
+        );
+    };
 
     return (
         <Page>
@@ -150,7 +143,6 @@ const Dashboard = () => {
                 <Select.Option value="go">Go</Select.Option>
                 <Select.Option value="ruby">Ruby</Select.Option>
                 <Select.Option value="php">PHP</Select.Option>
-                {/* Add options for the additional languages */}
             </Select>
             <Button auto onClick={handleAnalyze}>Analyze Code</Button>
             <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
@@ -187,8 +179,11 @@ const Dashboard = () => {
             )}
 
             {optimizedCode && (
-                <HighlightCode script={optimizedCode} />
-                )}
+                <Card shadow>
+                    <Text h2>Optimized Code</Text>
+                    <HighlightCode content={optimizedCode} language={language} />
+                </Card>
+            )}
 
             {performance && (
                 <Card shadow>
