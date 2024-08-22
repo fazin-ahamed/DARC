@@ -15,7 +15,7 @@ const Dashboard = () => {
 
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
     console.log('API_BASE_URL:', API_BASE_URL);// Debugging line
-    console.log("API_URL": process.env.NEXT_PUBLIC_API_URL);
+    console.log('API_URL:', process.env.NEXT_PUBLIC_API_URL);
 
     function reformatContent(content) {
         if (typeof content === 'string') {
