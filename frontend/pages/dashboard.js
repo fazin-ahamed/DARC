@@ -27,21 +27,21 @@ const Dashboard = () => {
 
     function reformatCode(content) {
         // Replace '\n' with actual newlines
-        let formattedCod = content.replace(/\\n/g, '\n');
+        let formattedCode = content.replace(/\\n/g, '\n');
     
         // Replace double backslashes with single backslashes
-        formattedCod = formattedCod.replace(/\\\\/g, '\\');
+        formattedCode = formattedCode.replace(/\\\\/g, '\\');
     
         // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-        formattedCod = formattedCod.replace(/(;|{|}|:)/g, '$1\n');
+        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
     
         // Remove multiple consecutive newlines
-        formattedCod = formattedCod.replace(/\n\s*\n/g, '\n');
+        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
 
         // Trim leading and trailing whitespace
-        formattedCod = formattedCod.trim();
+        formattedCode = formattedCode.trim();
 
-        return formattedCod;
+        return formattedCode;
     }
 
     const handleAnalyze = async () => {
