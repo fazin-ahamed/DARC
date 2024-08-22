@@ -1,48 +1,39 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useHistory } from 'react-router-dom';
 
-export default function Login() {
+export default function Signup() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
-    const router = useRouter();
+    const history = useHistory();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_SIGNUP_URL}`, { username, email, password });
+            const response = await axios.post(`${process.env.REACT_APP_SIGNUP_URL}`, { username, email, password });
             localStorage.setItem('token', response.data.access_token);
-            router.push('/login');
+            history.push('/login');
         } catch (error) {
             console.error('Signup failed:', error);
         }
     };
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <button type="submit">Sign Up</button>
-            </form>
-        </div>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Username:</label>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
     );
 }
