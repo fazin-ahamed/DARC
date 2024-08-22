@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/react';
+import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/core';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
