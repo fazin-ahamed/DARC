@@ -14,6 +14,6 @@
     "axios": "latest",
     "socket.io-client": "latest",
     "highlight.js": "latest",
-    "@geist-ui/react": "latest"
+    "@geist-ui/core": "latest"
   }
 }
