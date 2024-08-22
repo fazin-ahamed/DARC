@@ -13,6 +13,40 @@ const Dashboard = () => {
     // Get the API base URL from the environment variable
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+    function reformatContent(content) {
+        // Replace '\n' with spaces
+        let formattedContent = content.replace(/\\n/g, ' ');
+
+        // Replace double backslashes with single backslashes
+        formattedContent = formattedContent.replace(/\\\\/g, '');
+
+        // Remove multiple spaces
+        formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
+
+    return formattedContent;
+}
+
+    function reformatCode(content) {
+        // Replace '\n' with actual newlines
+        let formattedCode = content.replace(/\\n/g, '\n');
+    
+        // Replace double backslashes with single backslashes
+        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+    
+        // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
+        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+    
+        // Remove multiple consecutive newlines
+        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+
+        // Trim leading and trailing whitespace
+        formattedCode = formattedCode.trim();
+
+    return formattedCode;
+}
+
+
+    
     const handleAnalyze = async () => {
         const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
@@ -22,8 +56,14 @@ const Dashboard = () => {
             body: JSON.stringify({ code, language }),
         });
         const result = await response.json();
-        setAnalysisResults(result.suggestions);
-    };
+
+        const formattedSuggestions = result.suggestions(reformatContent);
+
+        setAnalysisResults(formattedSuggestions);
+    } catch (error) {
+        console.error('Error fetching suggestions:', error);
+    }
+};
 
     const handleComplexity = async () => {
         const response = await fetch(`${API_BASE_URL}/complexity`, {
@@ -34,10 +74,24 @@ const Dashboard = () => {
             body: JSON.stringify({ code, language }),
         });
         const result = await response.json();
-        setComplexity(result.complexity_score);
-    };
+
+        // Check if the optimization was successful
+        if (response.ok) {
+            // Reformat the optimized code before setting it
+            const formattedComplexityCode = reformatCode(result.complexity_score);
+            setComplexity(formattedComplexityCode);
+        } else {
+            // Handle any errors returned by the backend
+            console.error('Complexity Scanning failed:', result.error || 'Unknown error');
+        }
+    } catch (error) {
+        // Handle network or other unexpected errors
+        console.error('An error occurred during complexity scanning:', error);
+    }
+};
 
     const handleReview = async () => {
+    try {
         const response = await fetch(`${API_BASE_URL}/review`, {
             method: 'POST',
             headers: {
@@ -45,9 +99,19 @@ const Dashboard = () => {
             },
             body: JSON.stringify({ code, language }),
         });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
         const result = await response.json();
-        setReviewComments(result.comments);
-    };
+        const formattedComments = result.comments(reformatContent);
+
+        setReviewComments(formattedComments);
+    } catch (error) {
+        console.error('Error fetching review comments:', error);
+    }
+};
 
     const handleOptimize = async () => {
         const response = await fetch(`${API_BASE_URL}/optimize`, {
@@ -58,8 +122,21 @@ const Dashboard = () => {
             body: JSON.stringify({ code, language }),
         });
         const result = await response.json();
-        setOptimizedCode(result.optimized_code);
-    };
+        
+        // Check if the optimization was successful
+        if (response.ok) {
+            // Reformat the optimized code before setting it
+            const formattedOptimizedCode = reformatCode(result.optimized_code);
+            setOptimizedCode(formattedOptimizedCode);
+        } else {
+            // Handle any errors returned by the backend
+            console.error('Optimization failed:', result.error || 'Unknown error');
+        }
+    } catch (error) {
+        // Handle network or other unexpected errors
+        console.error('An error occurred during optimization:', error);
+    }
+};
 
     const handleProfile = async () => {
         const response = await fetch(`${API_BASE_URL}/profile`, {
@@ -70,7 +147,20 @@ const Dashboard = () => {
             body: JSON.stringify({ code, language }),
         });
         const result = await response.json();
-        setPerformance(result.performance);
+        
+        // Check if the optimization was successful
+        if (response.ok) {
+            // Reformat the optimized code before setting it
+            const formattedProfileCode = reformatCode(result.performance);
+            setPerformance(formattedProfileCode);
+        } else {
+            // Handle any errors returned by the backend
+            console.error('Profiling failed:', result.error || 'Unknown error');
+        }
+    } catch (error) {
+        // Handle network or other unexpected errors
+        console.error('An error occurred during profiling:', error);
+    }
     };
 
     return (
