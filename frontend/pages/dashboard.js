@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { prism } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -172,7 +174,9 @@ const Dashboard = () => {
             {optimizedCode && (
                 <div className="optimization-results">
                     <h2>Optimized Code</h2>
-                    <pre>{optimizedCode}</pre>
+                    <SyntaxHighlighter language={language} style={dark}>
+                        {optimizedCode}
+                    </SyntaxHighlighter>
                 </div>
             )}
 
