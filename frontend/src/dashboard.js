@@ -48,13 +48,23 @@ const Dashboard = () => {
                 },
                 body: JSON.stringify(body),
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Unknown error');
             }
-
-            return await response.json();
+    
+            const text = await response.text();
+            if (!text) {
+                throw new Error('Received empty response');
+            }
+    
+            try {
+                return JSON.parse(text);
+            } catch (err) {
+                console.error('Failed to parse JSON:', text);
+                throw new Error('Failed to parse JSON');
+            }
         } catch (err) {
             console.error('Fetch error:', err);
             setError(err.message || 'An error occurred');
