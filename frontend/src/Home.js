@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../styles/global.css';
 
 export default function Home() {
   return (
@@ -12,8 +13,9 @@ export default function Home() {
 
       <main>
         <h1>Welcome to the School Project By Fazin</h1>
-        <Link to="/login">Login</Link>
-        <Link to="/signup">Sign Up</Link>
+        <Link to="/login" className="link-spacing">Login</Link>
+        <Link to="/signup" className="link-spacing">Sign Up</Link>
+        <Link to="/dashboard" className="link-spacing"><Dashboard</Link>
       </main>
     </div>
   );
