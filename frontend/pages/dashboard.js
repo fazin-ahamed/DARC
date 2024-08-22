@@ -113,8 +113,10 @@ const Dashboard = () => {
             const formattedProfileCode = reformatCode(result.performance);
             setPerformance(formattedProfileCode);
         }
+        
+    };
 
-        // Define the HighlightCode component outside of the JS block
+    // Define the HighlightCode component outside of the JS block
     const HighlightCode = ({ content }) => {
         const script = code;
         const highlightedCode = hljs.highlight(script, { language: {language}}).value;
@@ -129,8 +131,6 @@ const Dashboard = () => {
             </div>
             );
         };
-        
-    };
 
     return (
         <Page>
