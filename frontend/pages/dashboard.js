@@ -1,7 +1,19 @@
-import React, { useState } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider, Code } from '@geist-ui/react';
-import { highlight, languages } from 'prismjs';
-import 'prismjs/themes/prism.css'; // You can choose a different theme
+import React, { useState }, { useEffect } from 'react';
+import { Page, Textarea, Select, Button, Text, Card, Divider} from '@geist-ui/react';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import python from 'highlight.js/lib/languages/python';
+import java from 'highlight.js/lib/languages/java';
+import ruby from 'highlight.js/lib/languages/ruby';
+import php from 'highlight.js/lib/languages/php';
+import go from 'highlight.js/lib/languages/go';
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('java', java)
+hljs.registerLanguage('ruby', ruby)
+hljs.registerLanguage('php', php)
+hljs.registerLanguage('go', go)
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -101,6 +113,23 @@ const Dashboard = () => {
             const formattedProfileCode = reformatCode(result.performance);
             setPerformance(formattedProfileCode);
         }
+
+        // Define the HighlightCode component outside of the JS block
+    const HighlightCode = ({ content }) => {
+        const script = code;
+        const highlightedCode = hljs.highlight(script, { language: {language}}).value;
+
+        return (
+            <div>
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: highlightedCode,
+                        }}
+                    />
+            </div>
+            );
+        };
+        
     };
 
     return (
@@ -162,13 +191,8 @@ const Dashboard = () => {
             )}
 
             {optimizedCode && (
-                <Card shadow>
-                    <Text h2>Optimized Code</Text>
-                    <pre>
-                        <Code block>{highlight(optimizedCode, languages[language], language)}</Code>
-                    </pre>
-                </Card>
-            )}
+                <HighlightCode script={optimizedCode} />
+                )}
 
             {performance && (
                 <Card shadow>
