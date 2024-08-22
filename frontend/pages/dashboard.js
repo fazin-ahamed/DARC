@@ -47,7 +47,8 @@ const Dashboard = () => {
 
 
     
-    const handleAnalyze = async () => {
+const handleAnalyze = async () => {
+    try {
         const response = await fetch(`${API_BASE_URL}/analyze`, {
             method: 'POST',
             headers: {
@@ -66,6 +67,7 @@ const Dashboard = () => {
 };
 
     const handleComplexity = async () => {
+    try {
         const response = await fetch(`${API_BASE_URL}/complexity`, {
             method: 'POST',
             headers: {
@@ -113,7 +115,8 @@ const Dashboard = () => {
     }
 };
 
-    const handleOptimize = async () => {
+const handleOptimize = async () => {
+    try {
         const response = await fetch(`${API_BASE_URL}/optimize`, {
             method: 'POST',
             headers: {
@@ -138,7 +141,8 @@ const Dashboard = () => {
     }
 };
 
-    const handleProfile = async () => {
+const handleProfile = async () => {
+    try {
         const response = await fetch(`${API_BASE_URL}/profile`, {
             method: 'POST',
             headers: {
@@ -161,7 +165,7 @@ const Dashboard = () => {
         // Handle network or other unexpected errors
         console.error('An error occurred during profiling:', error);
     }
-    };
+};
 
     return (
         <div className="dashboard">
