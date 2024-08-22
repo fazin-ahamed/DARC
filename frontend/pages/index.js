@@ -1,20 +1,20 @@
-import Head from 'next/head'
-import Link from 'next/link'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Home from './Home';
+import Login from './login';
+import Signup from './signup';
 
-export default function Home() {
+function App() {
   return (
-    <div>
-      <Head>
-        <title>Home Page</title>
-        <meta name="description" content="Home Page of the DARC Project" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <h1>Welcome to the School Project By Fazin</h1>
-        <Link href="/login">Login</Link>
-        <Link href="/signup">Sign Up</Link>
-      </main>
-    </div>
-  )
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/signup" component={Signup} />
+      </Switch>
+    </Router>
+  );
 }
+
+ReactDOM.render(<App />, document.getElementById('root'));
