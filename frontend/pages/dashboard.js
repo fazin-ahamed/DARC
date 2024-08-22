@@ -38,10 +38,6 @@ const Dashboard = () => {
     }
 
     function reformatCode(content) {
-        if (typeof content !== 'string') {
-            console.error('Expected a string for reformatting but received:', typeof content);
-            return content;
-        }
 
         let formattedCode = content.replace(/\\n/g, '\n');
         formattedCode = formattedCode.replace(/\\\\/g, '\\');
