@@ -14,6 +14,8 @@ const Dashboard = () => {
     const [error, setError] = useState(null);
 
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+    console.log('API_BASE_URL:', API_BASE_URL);// Debugging line
+    console.log("API_URL": process.env.NEXT_PUBLIC_API_URL);
 
     function reformatContent(content) {
         if (typeof content === 'string') {
@@ -48,17 +50,17 @@ const Dashboard = () => {
                 },
                 body: JSON.stringify(body),
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Unknown error');
             }
-
+    
             const text = await response.text();
             if (!text) {
                 throw new Error('Received empty response');
             }
-
+    
             try {
                 return JSON.parse(text);
             } catch (err) {
