@@ -34,16 +34,21 @@ const Dashboard = () => {
             formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
             return formattedContent;
         }
+        console.warn('Expected string but received:', content);
         return content;
     }
 
     function reformatCode(content) {
-        let formattedCode = content.replace(/\\n/g, '\n');
-        formattedCode = formattedCode.replace(/\\\\/g, '\\');
-        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-        formattedCode = formattedCode.trim();
-        return formattedCode;
+        if (typeof content === 'string') {
+            let formattedCode = content.replace(/\\n/g, '\n');
+            formattedCode = formattedCode.replace(/\\\\/g, '\\');
+            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+            formattedCode = formattedCode.trim();
+            return formattedCode;
+        }
+        console.warn('Expected string but received:', content);
+        return content;
     }
 
     async function fetchData(url, method, body) {
@@ -96,7 +101,11 @@ const Dashboard = () => {
     const handleOptimize = async () => {
         const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
         if (result) {
-            const formattedOptimizedCode = reformatCode(result.optimized_code);
+            let optimizedCodeContent = result.optimized_code;
+            if (typeof optimizedCodeContent !== 'string') {
+                optimizedCodeContent = JSON.stringify(optimizedCodeContent);
+            }
+            const formattedOptimizedCode = reformatCode(optimizedCodeContent);
             setOptimizedCode(formattedOptimizedCode);
         }
     };
