@@ -1,19 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/react';
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import python from 'highlight.js/lib/languages/python';
-import java from 'highlight.js/lib/languages/java';
-import ruby from 'highlight.js/lib/languages/ruby';
-import php from 'highlight.js/lib/languages/php';
-import go from 'highlight.js/lib/languages/go';
-
-hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('python', python);
-hljs.registerLanguage('java', java);
-hljs.registerLanguage('ruby', ruby);
-hljs.registerLanguage('php', php);
-hljs.registerLanguage('go', go);
+import { Page, Textarea, Select, Button, Text, Card, Divider, Code } from '@geist-ui/core';
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -120,18 +106,6 @@ const Dashboard = () => {
         }
     };
 
-    const HighlightCode = ({ content, language }) => {
-        const highlightedCode = hljs.highlight(content, { language }).value;
-
-        return (
-            <div
-                dangerouslySetInnerHTML={{
-                    __html: highlightedCode,
-                }}
-            />
-        );
-    };
-
     return (
         <Page>
             <Text h1>Code Analysis Dashboard</Text>
@@ -192,7 +166,7 @@ const Dashboard = () => {
             {optimizedCode && (
                 <Card shadow>
                     <Text h2>Optimized Code</Text>
-                    <HighlightCode content={optimizedCode} language={language} />
+                    <Code block my={0}><{optimizedCode} /></Code>
                 </Card>
             )}
 
