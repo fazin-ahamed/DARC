@@ -105,6 +105,8 @@ const Dashboard = () => {
             if (typeof optimizedCodeContent !== 'string') {
                 optimizedCodeContent = JSON.stringify(optimizedCodeContent);
             }
+            // Remove surrounding triple backticks
+            optimizedCodeContent = optimizedCodeContent.replace(/(^```[a-z]*\n|\n```$)/g, '');
             const formattedOptimizedCode = reformatCode(optimizedCodeContent);
             setOptimizedCode(formattedOptimizedCode);
         }
