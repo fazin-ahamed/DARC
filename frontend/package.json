@@ -2,20 +2,19 @@
   "name": "darc-frontend",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
   "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "axios": "latest",
-    "socket.io-client": "latest",
-    "highlight.js": "latest",
-    "@geist-ui/core": "latest",
+    "@geist-ui/core": "^2.3.8",
+    "axios": "^1.4.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "socket.io-client": "^4.5.4",
     "react-syntax-highlighter": "^15.4.4",
     "react-router-dom": "^6.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   }
 }
