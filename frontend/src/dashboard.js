@@ -48,17 +48,17 @@ const Dashboard = () => {
                 },
                 body: JSON.stringify(body),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Unknown error');
             }
-    
+
             const text = await response.text();
             if (!text) {
                 throw new Error('Received empty response');
             }
-    
+
             try {
                 return JSON.parse(text);
             } catch (err) {
