@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider, Code } from '@geist-ui/core';
+import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -166,7 +168,9 @@ const Dashboard = () => {
             {optimizedCode && (
                 <Card shadow>
                     <Text h2>Optimized Code</Text>
-                    <Code block my={0}><{optimizedCode} /></Code>
+                    <SyntaxHighlighter language={language} style={nightOwl}>
+                        {optimizedCode}
+                    </SyntaxHighlighter>
                 </Card>
             )}
 
