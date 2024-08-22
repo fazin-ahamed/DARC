@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { prism } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Page, Textarea, Select, Button, Text, Card, Divider, Code } from '@geist-ui/react';
+import { highlight, languages } from 'prismjs';
+import 'prismjs/themes/prism.css'; // You can choose a different theme
 
 const Dashboard = () => {
     const [code, setCode] = useState('');
@@ -12,50 +13,33 @@ const Dashboard = () => {
     const [optimizedCode, setOptimizedCode] = useState('');
     const [error, setError] = useState(null);
 
-    // Get the API base URL from the environment variable
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
     function reformatContent(content) {
         if (typeof content === 'string') {
-            // Replace '\n' with spaces
             let formattedContent = content.replace(/\\n/g, ' ');
-
-            // Replace double backslashes with single backslashes
             formattedContent = formattedContent.replace(/\\\\/g, '');
-
-            // Remove multiple spaces
             formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
-
             return formattedContent;
         }
-        return content; // Return as is if it's not a string
+        return content;
     }
 
     function reformatCode(content) {
-    // Check if content is a string
-    if (typeof content !== 'string') {
-        console.error('Expected a string for reformatting but received:', typeof content);
-        return content; // Return the original content if not a string
+        if (typeof content !== 'string') {
+            console.error('Expected a string for reformatting but received:', typeof content);
+            return content;
+        }
+
+        let formattedCode = content.replace(/\\n/g, '\n');
+        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+        formattedCode = formattedCode.trim();
+
+        return formattedCode;
     }
 
-    // Replace '\n' with actual newlines
-    let formattedCode = content.replace(/\\n/g, '\n');
-    
-    // Replace double backslashes with single backslashes
-    formattedCode = formattedCode.replace(/\\\\/g, '\\');
-    
-    // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-    formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-    
-    // Remove multiple consecutive newlines
-    formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-
-    // Trim leading and trailing whitespace
-    formattedCode = formattedCode.trim();
-
-    return formattedCode;
-}
-    
     async function fetchData(url, method, body) {
         try {
             const response = await fetch(url, {
@@ -89,9 +73,9 @@ const Dashboard = () => {
 
     const handleComplexity = async () => {
         const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
-       if (result) {
-                const formattedComplexityCode = reformatCode(result.complexity_score);
-                setComplexity(formattedComplexityCode);
+        if (result) {
+            const formattedComplexityCode = reformatCode(result.complexity_score);
+            setComplexity(formattedComplexityCode);
         }
     };
 
@@ -106,8 +90,8 @@ const Dashboard = () => {
     const handleOptimize = async () => {
         const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
         if (result) {
-                const formattedOptimizedCode = reformatCode(result.optimized_code);
-                setOptimizedCode(formattedOptimizedCode);
+            const formattedOptimizedCode = reformatCode(result.optimized_code);
+            setOptimizedCode(formattedOptimizedCode);
         }
     };
 
@@ -120,73 +104,81 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard">
-            <h1>Code Analysis Dashboard</h1>
-            <textarea
+        <Page>
+            <Text h1>Code Analysis Dashboard</Text>
+            <Textarea
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="Enter your code here"
                 rows="10"
+                width="100%"
             />
-            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-                <option value="python">Python</option>
-                <option value="java">Java</option>
-                <option value="javascript">JavaScript</option>
-                <option value="go">Go</option>
-                <option value="ruby">Ruby</option>
-                <option value="php">PHP</option>
+            <Select
+                value={language}
+                onChange={setLanguage}
+                placeholder="Select Language"
+                width="100%"
+            >
+                <Select.Option value="python">Python</Select.Option>
+                <Select.Option value="java">Java</Select.Option>
+                <Select.Option value="javascript">JavaScript</Select.Option>
+                <Select.Option value="go">Go</Select.Option>
+                <Select.Option value="ruby">Ruby</Select.Option>
+                <Select.Option value="php">PHP</Select.Option>
                 {/* Add options for the additional languages */}
-            </select>
-            <button onClick={handleAnalyze}>Analyze Code</button>
-            <button onClick={handleComplexity}>Analyze Complexity</button>
-            <button onClick={handleReview}>Review Code</button>
-            <button onClick={handleOptimize}>Optimize Code</button>
-            <button onClick={handleProfile}>Profile Code Performance</button>
+            </Select>
+            <Button auto onClick={handleAnalyze}>Analyze Code</Button>
+            <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
+            <Button auto onClick={handleReview}>Review Code</Button>
+            <Button auto onClick={handleOptimize}>Optimize Code</Button>
+            <Button auto onClick={handleProfile}>Profile Code Performance</Button>
 
             {error && (
-                <div className="error">
-                    <h2>Error</h2>
-                    <pre>{error}</pre>
-                </div>
+                <Card shadow type="error">
+                    <Text h2>Error</Text>
+                    <Text>{error}</Text>
+                </Card>
             )}
 
             {analysisResults && (
-                <div className="analysis-results">
-                    <h2>Code Analysis</h2>
-                    <pre>{JSON.stringify(analysisResults, null, 2)}</pre>
-                </div>
+                <Card shadow>
+                    <Text h2>Code Analysis</Text>
+                    <Text>{JSON.stringify(analysisResults, null, 2)}</Text>
+                </Card>
             )}
 
             {complexity && (
-                <div className="complexity-results">
-                    <h2>Code Complexity</h2>
-                    <pre>{JSON.stringify(complexity, null, 2)}</pre>
-                </div>
+                <Card shadow>
+                    <Text h2>Code Complexity</Text>
+                    <Text>{JSON.stringify(complexity, null, 2)}</Text>
+                </Card>
             )}
 
             {reviewComments && (
-                <div className="review-results">
-                    <h2>Code Review Comments</h2>
-                    <pre>{JSON.stringify(reviewComments, null, 2)}</pre>
-                </div>
+                <Card shadow>
+                    <Text h2>Code Review Comments</Text>
+                    <Text>{JSON.stringify(reviewComments, null, 2)}</Text>
+                </Card>
             )}
 
             {optimizedCode && (
-                <div className="optimization-results">
-                    <h2>Optimized Code</h2>
-                    <SyntaxHighlighter language={language} style={dark}>
-                        {optimizedCode}
-                    </SyntaxHighlighter>
-                </div>
+                <Card shadow>
+                    <Text h2>Optimized Code</Text>
+                    <pre>
+                        <Code block>{highlight(optimizedCode, languages[language], language)}</Code>
+                    </pre>
+                </Card>
             )}
 
             {performance && (
-                <div className="performance-results">
-                    <h2>Code Performance</h2>
-                    <pre>{JSON.stringify(performance, null, 2)}</pre>
-                </div>
+                <Card shadow>
+                    <Text h2>Code Performance</Text>
+                    <Text>{JSON.stringify(performance, null, 2)}</Text>
+                </Card>
             )}
-        </div>
+
+            <Divider />
+        </Page>
     );
 };
 
