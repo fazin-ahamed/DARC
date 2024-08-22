@@ -88,14 +88,8 @@ const Dashboard = () => {
     const handleComplexity = async () => {
         const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
        if (result) {
-            // Ensure result.complexity_score is a string
-            if (typeof result.complexity_score === 'string') {
                 const formattedComplexityCode = reformatCode(result.complexity_score);
                 setComplexity(formattedComplexityCode);
-            } else {
-                console.error('Expected complexity_score to be a string but received:', typeof result.complexity_score);
-                setComplexity('Invalid format');
-            }
         }
     };
 
@@ -110,14 +104,8 @@ const Dashboard = () => {
     const handleOptimize = async () => {
         const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
         if (result) {
-            // Ensure result.complexity_score is a string
-            if (typeof result.optimized_code === 'string') {
                 const formattedOptimizedCode = reformatCode(result.optimized_code);
                 setOptimizedCode(formattedOptimizedCode);
-            } else {
-                console.error('Expected complexity_score to be a string but received:', typeof result.complexity_score);
-                setComplexity('Invalid format');
-            }
         }
     };
 
