@@ -30,26 +30,29 @@ const Dashboard = () => {
     }
 
     function reformatCode(content) {
-        if (typeof content === 'string') {
-            // Replace '\n' with actual newlines
-            let formattedCode = content.replace(/\\n/g, '\n');
-
-            // Replace double backslashes with single backslashes
-            formattedCode = formattedCode.replace(/\\\\/g, '\\');
-
-            // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-
-            // Remove multiple consecutive newlines
-            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-
-            // Trim leading and trailing whitespace
-            formattedCode = formattedCode.trim();
-
-            return formattedCode;
-        }
-        return content; // Return as is if it's not a string
+        // Check if content is a string
+        if (typeof content !== 'string') {
+            console.error('Expected a string for reformatting but received:', typeof content);
+        return content; // Return the original content if not a string
     }
+
+        // Replace '\n' with actual newlines
+        let formattedCode = content.replace(/\\n/g, '\n');
+    
+        // Replace double backslashes with single backslashes
+        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+    
+        // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
+        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+    
+        // Remove multiple consecutive newlines
+        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+
+        // Trim leading and trailing whitespace
+        formattedCode = formattedCode.trim();
+
+    return formattedCode;
+}
 
     async function fetchData(url, method, body) {
         try {
@@ -84,9 +87,15 @@ const Dashboard = () => {
 
     const handleComplexity = async () => {
         const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
-        if (result) {
-            const formattedComplexityCode = reformatCode(result.complexity_score);
-            setComplexity(formattedComplexityCode);
+       if (result) {
+            // Ensure result.complexity_score is a string
+            if (typeof result.complexity_score === 'string') {
+                const formattedComplexityCode = reformatCode(result.complexity_score);
+                setComplexity(formattedComplexityCode);
+            } else {
+                console.error('Expected complexity_score to be a string but received:', typeof result.complexity_score);
+                setComplexity('Invalid format');
+            }
         }
     };
 
@@ -101,8 +110,14 @@ const Dashboard = () => {
     const handleOptimize = async () => {
         const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
         if (result) {
-            const formattedOptimizedCode = reformatCode(result.optimized_code);
-            setOptimizedCode(formattedOptimizedCode);
+            // Ensure result.complexity_score is a string
+            if (typeof result.optimized_code === 'string') {
+                const formattedOptimizedCode = reformatCode(result.optimized_code);
+                setOptimizedCode(formattedOptimizedCode);
+            } else {
+                console.error('Expected complexity_score to be a string but received:', typeof result.complexity_score);
+                setComplexity('Invalid format');
+            }
         }
     };
 
