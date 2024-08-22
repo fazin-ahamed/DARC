@@ -151,21 +151,21 @@ const Dashboard = () => {
             {analysisResults && (
                 <div className="analysis-results">
                     <h2>Code Analysis</h2>
-                    <pre>{analysisResults}</pre>
+                    <pre>{JSON.stringify(analysisResults, null, 2)}</pre>
                 </div>
             )}
 
             {complexity && (
                 <div className="complexity-results">
                     <h2>Code Complexity</h2>
-                    <pre>{complexity}</pre>
+                    <pre>{JSON.stringify(complexity, null, 2)}</pre>
                 </div>
             )}
 
             {reviewComments && (
                 <div className="review-results">
                     <h2>Code Review Comments</h2>
-                    <pre>{reviewComments}</pre>
+                    <pre>{JSON.stringify(reviewComments, null, 2)}</pre>
                 </div>
             )}
 
@@ -179,7 +179,7 @@ const Dashboard = () => {
             {performance && (
                 <div className="performance-results">
                     <h2>Code Performance</h2>
-                    <pre>{performance}</pre>
+                    <pre>{JSON.stringify(performance, null, 2)}</pre>
                 </div>
             )}
         </div>
