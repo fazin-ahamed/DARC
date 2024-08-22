@@ -13,35 +13,41 @@ const Dashboard = () => {
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
     function reformatContent(content) {
-        // Replace '\n' with spaces
-        let formattedContent = content.replace(/\\n/g, ' ');
+        if (typeof content === 'string') {
+            // Replace '\n' with spaces
+            let formattedContent = content.replace(/\\n/g, ' ');
 
-        // Replace double backslashes with single backslashes
-        formattedContent = formattedContent.replace(/\\\\/g, '');
+            // Replace double backslashes with single backslashes
+            formattedContent = formattedContent.replace(/\\\\/g, '');
 
-        // Remove multiple spaces
-        formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
+            // Remove multiple spaces
+            formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
 
-        return formattedContent;
+            return formattedContent;
+        }
+        return content; // Return as is if it's not a string
     }
 
     function reformatCode(content) {
-        // Replace '\n' with actual newlines
-        let formattedCode = content.replace(/\\n/g, '\n');
+        if (typeof content === 'string') {
+            // Replace '\n' with actual newlines
+            let formattedCode = content.replace(/\\n/g, '\n');
     
-        // Replace double backslashes with single backslashes
-        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+            // Replace double backslashes with single backslashes
+            formattedCode = formattedCode.replace(/\\\\/g, '\\');
     
-        // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+            // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
+            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
     
-        // Remove multiple consecutive newlines
-        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+            // Remove multiple consecutive newlines
+            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
 
-        // Trim leading and trailing whitespace
-        formattedCode = formattedCode.trim();
+            // Trim leading and trailing whitespace
+            formattedCode = formattedCode.trim();
 
-        return formattedCode;
+            return formattedCode;
+        }
+        return content; // Return as is if it's not a string
     }
 
     const handleAnalyze = async () => {
@@ -54,6 +60,8 @@ const Dashboard = () => {
                 body: JSON.stringify({ code, language }),
             });
             const result = await response.json();
+
+            console.log('Analyze Result:', result); // Log the result for debugging
 
             // Directly set the suggestions as plain text
             const formattedSuggestions = reformatContent(result.suggestions);
@@ -74,6 +82,8 @@ const Dashboard = () => {
                 body: JSON.stringify({ code, language }),
             });
             const result = await response.json();
+
+            console.log('Complexity Result:', result); // Log the result for debugging
 
             // Check if the optimization was successful
             if (response.ok) {
@@ -105,6 +115,8 @@ const Dashboard = () => {
             }
 
             const result = await response.json();
+            console.log('Review Result:', result); // Log the result for debugging
+
             // Directly set the review comments as plain text
             const formattedComments = reformatContent(result.comments);
 
@@ -125,6 +137,8 @@ const Dashboard = () => {
             });
             const result = await response.json();
             
+            console.log('Optimize Result:', result); // Log the result for debugging
+
             // Check if the optimization was successful
             if (response.ok) {
                 // Reformat the optimized code before setting it
@@ -151,6 +165,8 @@ const Dashboard = () => {
             });
             const result = await response.json();
             
+            console.log('Profile Result:', result); // Log the result for debugging
+
             // Check if the profiling was successful
             if (response.ok) {
                 // Reformat the performance data before setting it
