@@ -11,7 +11,7 @@ export default function Signup() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(`${process.env.SIGNUP_URL}`, { username, email, password });
+            const response = await axios.post(`${process.env.REACT_APP_SIGNUP_URL}`, { username, email, password });
             localStorage.setItem('token', response.data.access_token);
             navigate('/login');
         } catch (error) {
