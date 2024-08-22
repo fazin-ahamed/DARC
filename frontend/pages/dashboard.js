@@ -13,6 +13,44 @@ const Dashboard = () => {
     // Get the API base URL from the environment variable
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+    function reformatContent(content) {
+        if (typeof content === 'string') {
+            // Replace '\n' with spaces
+            let formattedContent = content.replace(/\\n/g, ' ');
+
+            // Replace double backslashes with single backslashes
+            formattedContent = formattedContent.replace(/\\\\/g, '');
+
+            // Remove multiple spaces
+            formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
+
+            return formattedContent;
+        }
+        return content; // Return as is if it's not a string
+    }
+
+    function reformatCode(content) {
+        if (typeof content === 'string') {
+            // Replace '\n' with actual newlines
+            let formattedCode = content.replace(/\\n/g, '\n');
+
+            // Replace double backslashes with single backslashes
+            formattedCode = formattedCode.replace(/\\\\/g, '\\');
+
+            // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
+            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+
+            // Remove multiple consecutive newlines
+            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+
+            // Trim leading and trailing whitespace
+            formattedCode = formattedCode.trim();
+
+            return formattedCode;
+        }
+        return content; // Return as is if it's not a string
+    }
+
     async function fetchData(url, method, body) {
         try {
             const response = await fetch(url, {
