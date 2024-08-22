@@ -8,177 +8,71 @@ const Dashboard = () => {
     const [reviewComments, setReviewComments] = useState(null);
     const [performance, setPerformance] = useState(null);
     const [optimizedCode, setOptimizedCode] = useState('');
+    const [error, setError] = useState(null);
 
     // Get the API base URL from the environment variable
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-    function reformatContent(content) {
-        if (typeof content === 'string') {
-            // Replace '\n' with spaces
-            let formattedContent = content.replace(/\\n/g, ' ');
-
-            // Replace double backslashes with single backslashes
-            formattedContent = formattedContent.replace(/\\\\/g, '');
-
-            // Remove multiple spaces
-            formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
-
-            return formattedContent;
-        }
-        return content; // Return as is if it's not a string
-    }
-
-    function reformatCode(content) {
-        if (typeof content === 'string') {
-            // Replace '\n' with actual newlines
-            let formattedCode = content.replace(/\\n/g, '\n');
-    
-            // Replace double backslashes with single backslashes
-            formattedCode = formattedCode.replace(/\\\\/g, '\\');
-    
-            // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-    
-            // Remove multiple consecutive newlines
-            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-
-            // Trim leading and trailing whitespace
-            formattedCode = formattedCode.trim();
-
-            return formattedCode;
-        }
-        return content; // Return as is if it's not a string
-    }
-
-    const handleAnalyze = async () => {
+    async function fetchData(url, method, body) {
         try {
-            const response = await fetch(`${API_BASE_URL}/analyze`, {
-                method: 'POST',
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code, language }),
+                body: JSON.stringify(body),
             });
-            const result = await response.json();
 
-            console.log('Analyze Result:', result); // Log the result for debugging
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Unknown error');
+            }
 
-            // Directly set the suggestions as plain text
+            return await response.json();
+        } catch (err) {
+            console.error('Fetch error:', err);
+            setError(err.message || 'An error occurred');
+            return null;
+        }
+    }
+
+    const handleAnalyze = async () => {
+        const result = await fetchData(`${API_BASE_URL}/analyze`, 'POST', { code, language });
+        if (result) {
             const formattedSuggestions = reformatContent(result.suggestions);
-
             setAnalysisResults(formattedSuggestions);
-        } catch (error) {
-            console.error('Error fetching suggestions:', error);
         }
     };
 
     const handleComplexity = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/complexity`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, language }),
-            });
-            const result = await response.json();
-
-            console.log('Complexity Result:', result); // Log the result for debugging
-
-            // Check if the optimization was successful
-            if (response.ok) {
-                // Reformat the complexity score before setting it
-                const formattedComplexityCode = reformatCode(result.complexity_score);
-                setComplexity(formattedComplexityCode);
-            } else {
-                // Handle any errors returned by the backend
-                console.error('Complexity Scanning failed:', result.error || 'Unknown error');
-            }
-        } catch (error) {
-            // Handle network or other unexpected errors
-            console.error('An error occurred during complexity scanning:', error);
+        const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
+        if (result) {
+            const formattedComplexityCode = reformatCode(result.complexity_score);
+            setComplexity(formattedComplexityCode);
         }
     };
 
     const handleReview = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/review`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, language }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const result = await response.json();
-            console.log('Review Result:', result); // Log the result for debugging
-
-            // Directly set the review comments as plain text
+        const result = await fetchData(`${API_BASE_URL}/review`, 'POST', { code, language });
+        if (result) {
             const formattedComments = reformatContent(result.comments);
-
             setReviewComments(formattedComments);
-        } catch (error) {
-            console.error('Error fetching review comments:', error);
         }
     };
 
     const handleOptimize = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/optimize`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, language }),
-            });
-            const result = await response.json();
-            
-            console.log('Optimize Result:', result); // Log the result for debugging
-
-            // Check if the optimization was successful
-            if (response.ok) {
-                // Reformat the optimized code before setting it
-                const formattedOptimizedCode = reformatCode(result.optimized_code);
-                setOptimizedCode(formattedOptimizedCode);
-            } else {
-                // Handle any errors returned by the backend
-                console.error('Optimization failed:', result.error || 'Unknown error');
-            }
-        } catch (error) {
-            // Handle network or other unexpected errors
-            console.error('An error occurred during optimization:', error);
+        const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
+        if (result) {
+            const formattedOptimizedCode = reformatCode(result.optimized_code);
+            setOptimizedCode(formattedOptimizedCode);
         }
     };
 
     const handleProfile = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/profile`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, language }),
-            });
-            const result = await response.json();
-            
-            console.log('Profile Result:', result); // Log the result for debugging
-
-            // Check if the profiling was successful
-            if (response.ok) {
-                // Reformat the performance data before setting it
-                const formattedProfileCode = reformatCode(result.performance);
-                setPerformance(formattedProfileCode);
-            } else {
-                // Handle any errors returned by the backend
-                console.error('Profiling failed:', result.error || 'Unknown error');
-            }
-        } catch (error) {
-            // Handle network or other unexpected errors
-            console.error('An error occurred during profiling:', error);
+        const result = await fetchData(`${API_BASE_URL}/profile`, 'POST', { code, language });
+        if (result) {
+            const formattedProfileCode = reformatCode(result.performance);
+            setPerformance(formattedProfileCode);
         }
     };
 
@@ -205,6 +99,13 @@ const Dashboard = () => {
             <button onClick={handleReview}>Review Code</button>
             <button onClick={handleOptimize}>Optimize Code</button>
             <button onClick={handleProfile}>Profile Code Performance</button>
+
+            {error && (
+                <div className="error">
+                    <h2>Error</h2>
+                    <pre>{error}</pre>
+                </div>
+            )}
 
             {analysisResults && (
                 <div className="analysis-results">
