@@ -13,6 +13,7 @@
     "react-dom": "latest",
     "axios": "latest",
     "socket.io-client": "latest",
-    "react-syntax-highlighter": "latest"
+    "react-syntax-highlighter": "latest",
+    "@geist-ui/react": "latest"
   }
 }
