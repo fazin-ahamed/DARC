@@ -30,30 +30,30 @@ const Dashboard = () => {
     }
 
     function reformatCode(content) {
-        // Check if content is a string
-        if (typeof content !== 'string') {
-            console.error('Expected a string for reformatting but received:', typeof content);
+    // Check if content is a string
+    if (typeof content !== 'string') {
+        console.error('Expected a string for reformatting but received:', typeof content);
         return content; // Return the original content if not a string
     }
 
-        // Replace '\n' with actual newlines
-        let formattedCode = content.replace(/\\n/g, '\n');
+    // Replace '\n' with actual newlines
+    let formattedCode = content.replace(/\\n/g, '\n');
     
-        // Replace double backslashes with single backslashes
-        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+    // Replace double backslashes with single backslashes
+    formattedCode = formattedCode.replace(/\\\\/g, '\\');
     
-        // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
-        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+    // Add newlines after specific characters for readability (e.g., semicolons, braces, colons)
+    formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
     
-        // Remove multiple consecutive newlines
-        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
+    // Remove multiple consecutive newlines
+    formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
 
-        // Trim leading and trailing whitespace
-        formattedCode = formattedCode.trim();
+    // Trim leading and trailing whitespace
+    formattedCode = formattedCode.trim();
 
     return formattedCode;
 }
-
+    
     async function fetchData(url, method, body) {
         try {
             const response = await fetch(url, {
