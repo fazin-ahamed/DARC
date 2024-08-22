@@ -14,6 +14,7 @@
     "axios": "latest",
     "socket.io-client": "latest",
     "highlight.js": "latest",
-    "@geist-ui/core": "latest"
+    "@geist-ui/core": "latest",
+    "react-syntax-highlighter": "^15.4.4"
   }
 }
