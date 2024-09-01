@@ -18,28 +18,46 @@ const Dashboard = () => {
     console.log('API_URL:', process.env.REACT_APP_API_URL);
 
     function reformatContent(content) {
-        if (typeof content === 'string') {
-            let formattedContent = content.replace(/\\n/g, ' ');
-            formattedContent = formattedContent.replace(/\\\\/g, '');
-            formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
-            return formattedContent;
-        }
-        console.warn('Expected string but received:', content);
-        return content;
+    if (typeof content === 'string') {
+        // Handle escaped newlines, extra slashes, and whitespace cleanup
+        let formattedContent = content.replace(/\\n/g, ' ');
+        formattedContent = formattedContent.replace(/\\\\/g, '');
+        formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
+        return formattedContent;
     }
+    console.warn('Expected string but received:', content);
+    return content;
+}
 
-    function reformatCode(content) {
-        if (typeof content === 'string') {
-            let formattedCode = content.replace(/\\n/g, '\n');
-            formattedCode = formattedCode.replace(/\\\\/g, '\\');
-            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-            formattedCode = formattedCode.trim();
-            return formattedCode;
-        }
-        console.warn('Expected string but received:', content);
-        return content;
+function reformatCode(content) {
+    if (typeof content === 'string') {
+        // Handle newline and escape sequences correctly
+        let formattedCode = content.replace(/\\n/g, '\n');
+        formattedCode = formattedCode.replace(/\\\\/g, '\\');
+        // Add newlines after semicolons, curly braces, and colons
+        formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
+        formattedCode = formattedCode.replace(/\n\s*\n/g, '\n').trim();
+        return formattedCode;
     }
+    console.warn('Expected string but received:', content);
+    return content;
+}
+
+function formatProfilingData(content) {
+    if (typeof content === 'string') {
+        // Assuming content is a JSON string or similar structured format
+        try {
+            const parsedData = JSON.parse(content);
+            return JSON.stringify(parsedData, null, 2); // Pretty-print JSON
+        } catch (err) {
+            console.warn('Failed to parse profiling data:', content);
+            return content; // If parsing fails, return the original content
+        }
+    }
+    console.warn('Expected string but received:', content);
+    return content;
+}
+
 
     async function fetchData(url, method, body) {
         try {
@@ -178,20 +196,24 @@ const Dashboard = () => {
             )}
 
             {optimizedCode && (
-                <Card shadow>
-                    <Text h2>Optimized Code</Text>
-                    <SyntaxHighlighter language={language} style={nightOwl}>
-                        {optimizedCode}
-                    </SyntaxHighlighter>
-                </Card>
+                    <Card shadow>
+                        <Text h2>Optimized Code</Text>
+                            <SyntaxHighlighter language={language} style={nightOwl}>
+                                {reformatCode(optimizedCode)}
+                            </SyntaxHighlighter>
+                    </Card>
             )}
 
+
             {performance && (
-                <Card shadow>
-                    <Text h2>Code Performance</Text>
-                    <Text>{JSON.stringify(performance, null, 2)}</Text>
-                </Card>
+                    <Card shadow>
+                        <Text h2>Code Performance Profile</Text>
+                        <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                            {formatProfilingData(performance)}
+                        </pre>
+                    </Card>
             )}
+
 
             <Divider />
         </Page>
