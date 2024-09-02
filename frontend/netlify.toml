@@ -40,10 +40,6 @@
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Content-Security-Policy = "default-src 'self' https://*.netlify.app; connect-src 'self' https://darc-backendonly.onrender.com https://api.example.com; style-src 'self' https://*.netlify.app https://fonts.googleapis.com https://cdn.jsdelivr.net; script-src 'self' https://*.netlify.app https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self'; worker-src 'self' blob:;"
-
-[[plugins]]
-  package = '@netlify/plugin-lighthouse'
 
 # Configure the deployment settings for the specific branch (optional)
 [context.production]
