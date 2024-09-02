@@ -16,10 +16,9 @@
   "scripts": {
     "prebuild": "mkdir -p build/monacoeditor/vs && cp -r node_modules/monaco-editor/esm/vs/* build/monacoeditor/vs/",
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run copy-monaco-workers && npm run copy-monaco-files",
+    "build": "react-scripts build && npm run copy-monaco-workers",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "copy-monaco-files": "cp -r node_modules/monaco-editor/esm/vs build/monacoeditor/vs",
     "copy-monaco-workers": "cp -r node_modules/monaco-editor/min build/monaco-editor"
   }
 }
