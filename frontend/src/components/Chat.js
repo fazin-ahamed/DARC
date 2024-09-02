@@ -6,7 +6,7 @@ const Chat = ({ sessionId }) => {
     const websocketRef = useRef(null);
 
     useEffect(() => {
-        websocketRef.current = new WebSocket(`ws://https://darc-backendonly.vercel.app//ws/chat/${sessionId}`);
+        websocketRef.current = new WebSocket(`ws://darc-backendonly.vercel.app/ws/chat/${sessionId}`);
 
         websocketRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
