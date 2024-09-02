@@ -1,21 +1,14 @@
-// src/monaco-loader.js
-
-// Ensure this script is loaded before Monaco Editor
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-
-// Configure Monaco Environment
 self.MonacoEnvironment = {
   getWorkerUrl: function (workerId, label) {
-    // Adjust the URL to point to your loader.js
-    if (label === 'json' || label === 'jsonc') {
-      return `https://your-site.netlify.app/monacoeditor/vs/base/worker/workerMain.js`;
-    }
-    return `https://your-site.netlify.app/monacoeditor/vs/${workerId}.js`;
+    return `/monacoeditor/vs/base/worker/workerMain.js`; // Use the correct path for your workers
   }
 };
 
 // Initialize Monaco Editor
-monaco.editor.create(document.getElementById('container'), {
+const container = document.getElementById('container');
+const language = window.selectedLanguage || 'javascript'; // Default to 'javascript' if no language is set
+
+monaco.editor.create(container, {
   value: '',
-  language: 'javascript'
+  language: language
 });
