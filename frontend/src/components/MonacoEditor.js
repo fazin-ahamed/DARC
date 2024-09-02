@@ -36,7 +36,9 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             setEditor(newEditor);
 
             // Format code on load
-            newEditor.getAction('editor.action.formatDocument').run();
+            newEditor.onDidLayoutChange(() => {
+                newEditor.getAction('editor.action.formatDocument').run();
+            });
 
             return () => {
                 newEditor.dispose();
@@ -79,7 +81,6 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             editor.onDidChangeModelContent(handleEditorChange);
 
             return () => {
-                // Correct cleanup: Remove the listener when the component is unmounted or when the editor changes
                 editor.onDidChangeModelContent(handleEditorChange);
             };
         }
