@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MonacoEditor from './components/MonacoEditor';
-import { Button, Text } from '@geist-ui/core';
+import { Button, Input, Text, Select } from '@geist-ui/core';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -13,6 +13,22 @@ const App = () => {
     const [performance, setPerformance] = useState(null);
     const [optimizedCode, setOptimizedCode] = useState('');
     const [error, setError] = useState(null);
+    const [sessionId, setSessionId] = useState('');
+    const [newSessionId, setNewSessionId] = useState('');
+    const [collabMode, setCollabMode] = useState(false);
+
+    const languages = [
+        'javascript',
+        'python',
+        'java',
+        'csharp',
+        'ruby',
+        'go',
+        'typescript',
+        'php',
+        'html',
+        'css'
+    ];
 
     const fetchData = async (endpoint, body) => {
         try {
@@ -72,50 +88,92 @@ const App = () => {
         }
     };
 
+    const handleSessionCreate = async () => {
+        const result = await fetchData('sessions/create-session', {});
+        if (result) {
+            setSessionId(result.session_id);
+            setCollabMode(true);
+        }
+    };
+
+    const handleSessionJoin = async () => {
+        const result = await fetchData('sessions/join-session', { session_id: newSessionId });
+        if (result) {
+            setSessionId(result.session_id);
+            setCollabMode(true);
+        }
+    };
+
     return (
         <div className="App">
             <h1>Code Analysis Dashboard</h1>
-            <MonacoEditor sessionId="example-session" language={language} initialValue={editorValue} onChange={(value) => setEditorValue(value)} />
-            <Button auto onClick={handleAnalyze}>Analyze Code</Button>
-            <Button auto onClick={handleReview}>Review Code</Button>
-            <Button auto onClick={handleOptimize}>Optimize Code</Button>
-            <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
-            <Button auto onClick={handleProfile}>Profile Code Performance</Button>
-
-            {error && <Text>{`Error: ${error}`}</Text>}
-
-            {analysisResults && (
+            
+            {!collabMode ? (
                 <div>
-                    <h2>Code Analysis Results</h2>
-                    <pre>{JSON.stringify(analysisResults, null, 2)}</pre>
+                    <h2>Session Management</h2>
+                    <Button auto onClick={handleSessionCreate}>Create New Session</Button>
+                    <Input placeholder="Enter Session ID" onChange={(e) => setNewSessionId(e.target.value)} />
+                    <Button auto onClick={handleSessionJoin}>Join Session</Button>
                 </div>
-            )}
-
-            {reviewComments && (
+            ) : (
                 <div>
-                    <h2>Code Review Comments</h2>
-                    <pre>{JSON.stringify(reviewComments, null, 2)}</pre>
-                </div>
-            )}
+                    <Select value={language} onChange={(value) => setLanguage(value)}>
+                        {languages.map(lang => (
+                            <Select.Option key={lang} value={lang}>
+                                {lang}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                    
+                    <MonacoEditor
+                        sessionId={sessionId}
+                        language={language}
+                        initialValue={editorValue}
+                        onChange={(value) => setEditorValue(value)}
+                    />
+                    
+                    <Button auto onClick={handleAnalyze}>Analyze Code</Button>
+                    <Button auto onClick={handleReview}>Review Code</Button>
+                    <Button auto onClick={handleOptimize}>Optimize Code</Button>
+                    <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
+                    <Button auto onClick={handleProfile}>Profile Code Performance</Button>
 
-            {complexity && (
-                <div>
-                    <h2>Code Complexity</h2>
-                    <pre>{JSON.stringify(complexity, null, 2)}</pre>
-                </div>
-            )}
+                    {error && <Text>{`Error: ${error}`}</Text>}
 
-            {optimizedCode && (
-                <div>
-                    <h2>Optimized Code</h2>
-                    <pre>{optimizedCode}</pre>
-                </div>
-            )}
+                    {analysisResults && (
+                        <div>
+                            <h2>Code Analysis Results</h2>
+                            <pre>{JSON.stringify(analysisResults, null, 2)}</pre>
+                        </div>
+                    )}
 
-            {performance && (
-                <div>
-                    <h2>Code Performance Profile</h2>
-                    <pre>{JSON.stringify(performance, null, 2)}</pre>
+                    {reviewComments && (
+                        <div>
+                            <h2>Code Review Comments</h2>
+                            <pre>{JSON.stringify(reviewComments, null, 2)}</pre>
+                        </div>
+                    )}
+
+                    {complexity && (
+                        <div>
+                            <h2>Code Complexity</h2>
+                            <pre>{JSON.stringify(complexity, null, 2)}</pre>
+                        </div>
+                    )}
+
+                    {optimizedCode && (
+                        <div>
+                            <h2>Optimized Code</h2>
+                            <pre>{optimizedCode}</pre>
+                        </div>
+                    )}
+
+                    {performance && (
+                        <div>
+                            <h2>Code Performance Profile</h2>
+                            <pre>{JSON.stringify(performance, null, 2)}</pre>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
