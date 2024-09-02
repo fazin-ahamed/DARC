@@ -24,7 +24,6 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const [editor, setEditor] = useState(null);
     const websocketRef = useRef(null);
     const currentSessionId = useRef(sessionId);
-    const editorChangeListenerRef = useRef(null);
 
     useEffect(() => {
         if (editorRef.current) {
@@ -87,12 +86,10 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 }
             };
 
-            editorChangeListenerRef.current = editor.onDidChangeModelContent(handleEditorChange);
+            const disposable = editor.onDidChangeModelContent(handleEditorChange);
 
             return () => {
-                if (editorChangeListenerRef.current) {
-                    editorChangeListenerRef.current.dispose();
-                }
+                disposable.dispose();
             };
         }
     }, [editor, onChange, sessionId]);
