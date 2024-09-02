@@ -23,6 +23,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const editorRef = useRef(null);
     const [editor, setEditor] = useState(null);
     const websocketRef = useRef(null);
+    const currentSessionId = useRef(sessionId);
 
     useEffect(() => {
         if (editorRef.current) {
@@ -49,8 +50,13 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     }, [initialValue, language]);
 
     useEffect(() => {
-        if (editor) {
+        if (editor && currentSessionId.current !== sessionId) {
+            if (websocketRef.current) {
+                websocketRef.current.close();
+            }
+
             websocketRef.current = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
+            currentSessionId.current = sessionId;
 
             websocketRef.current.onopen = () => console.log('WebSocket connection opened');
             websocketRef.current.onmessage = (event) => {
@@ -61,13 +67,13 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             };
             websocketRef.current.onerror = (error) => console.error('WebSocket error:', error);
             websocketRef.current.onclose = () => console.log('WebSocket connection closed');
-
-            return () => {
-                if (websocketRef.current) {
-                    websocketRef.current.close();
-                }
-            };
         }
+
+        return () => {
+            if (websocketRef.current) {
+                websocketRef.current.close();
+            }
+        };
     }, [sessionId, editor]);
 
     useEffect(() => {
