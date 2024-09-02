@@ -12,6 +12,9 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 language: language,
                 theme: 'vs-dark',
                 automaticLayout: true,  // Ensure proper layout
+                worker: {
+                    url: '../public/monaco-worker.js' // Path to the worker script
+                }
             });
             setEditor(newEditor);
             
