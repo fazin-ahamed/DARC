@@ -30,6 +30,8 @@
 [build.environment]
   # Environment variables
   REACT_APP_API_URL = "https://darc-backendonly.onrender.com"
+  REACT_APP_LOGIN_URL="https://hook.eu2.make.com/ome0aln75fq428bi35d89lcqs4v4brdp"
+  REACT_APP_SIGNUP_URL="https://hook.eu2.make.com/5acfg34p12mmcqw2sl5fdvj4946d9kbr"
 
 [build.publish]
   # Add custom headers
