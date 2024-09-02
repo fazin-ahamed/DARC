@@ -89,7 +89,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             editor.onDidChangeModelContent(handleEditorChange);
 
             return () => {
-                editor.onDidChangeModelContent(handleEditorChange);
+                editor.offDidChangeModelContent(handleEditorChange);
             };
         }
     }, [editor, onChange, sessionId]);
