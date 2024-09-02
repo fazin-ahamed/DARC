@@ -98,18 +98,17 @@ const Dashboard = () => {
 
 
     const handleSessionJoin = async () => {
-    // Ensure session_id is a string
-        const payload = { session_id: newSessionId.toString() };
-        console.log("Joining session with payload:", payload); // Debugging line
-        const result = await fetchData('sessions/join-session', payload);
+    const payload = { session_id: newSessionId.toString() };
     
-        if (result) {
-            // Ensure session_id is a string when setting state
-            setSessionId(result.session_id.toString());
-            setCollabMode(true);
-        }
-    };
-
+    console.log("Joining session with payload:", payload); // Debugging line
+    
+    const result = await fetchData('sessions/join-session', payload);
+    
+    if (result) {
+        setSessionId(result.session_id.toString());
+        setCollabMode(true);
+    }
+};
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text)
             .then(() => alert('Session ID copied to clipboard!'))
