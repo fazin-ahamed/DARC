@@ -80,7 +80,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
 
             return () => {
                 // Correct cleanup: Remove the listener when the component is unmounted or when the editor changes
-                editor.offDidChangeModelContent(handleEditorChange);
+                editor.onDidChangeModelContent(handleEditorChange);
             };
         }
     }, [editor, onChange, sessionId]);
