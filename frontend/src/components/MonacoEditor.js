@@ -1,36 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as monaco from 'monaco-editor';
 
-const MonacoEditor = ({ sessionId, language }) => {
+const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const editorRef = useRef(null);
+    const editorInstance = useRef(null);
     const [editor, setEditor] = useState(null);
 
     useEffect(() => {
         if (editorRef.current) {
             const newEditor = monaco.editor.create(editorRef.current, {
-                value: '',
+                value: initialValue || '',
                 language: language,
                 theme: 'vs-dark',
             });
             setEditor(newEditor);
+            
+            // Connect to WebSocket server
+            const websocket = new WebSocket(`ws://darc-backendonly.vercel.app/ws/${sessionId}`);
+
+            websocket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                if (message.sessionId !== sessionId) {
+                    // Update editor content if the message is from another session
+                    newEditor.setValue(message.content);
+                }
+            };
+
+            newEditor.onDidChangeModelContent(() => {
+                const content = newEditor.getValue();
+                onChange(content); // Trigger onChange callback
+                websocket.send(JSON.stringify({ sessionId, content }));
+            });
+
+            return () => {
+                websocket.close();
+                newEditor.dispose();
+            };
         }
-
-        const websocket = new WebSocket(`ws://darc-backendonly.vercel.app/ws/${sessionId}`);
-
-        websocket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            editor?.setValue(message.content);
-        };
-
-        editor?.onDidChangeModelContent(() => {
-            websocket.send(JSON.stringify({ content: editor.getValue() }));
-        });
-
-        return () => {
-            websocket.close();
-            editor?.dispose();
-        };
-    }, [sessionId, language]);
+    }, [sessionId, language, initialValue, onChange]);
 
     return <div ref={editorRef} style={{ height: '500px', width: '100%' }} />;
 };
