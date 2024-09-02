@@ -16,7 +16,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             setEditor(newEditor);
             
             // Connect to WebSocket server
-            const websocket = new WebSocket(`ws://darc-backendonly.vercel.app/ws/${sessionId}`);
+            const websocket = new WebSocket(`ws://darc-backendonly.onrender.com/ws/${sessionId}`);
 
             websocket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
