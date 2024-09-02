@@ -89,12 +89,29 @@ const Dashboard = () => {
     };
 
     const handleSessionCreate = async () => {
-        const result = await fetchData('sessions/create-session', {});
-        if (result) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/sessions/create-session`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Unknown error');
+        }
+
+        const result = await response.json();
+        if (result && result.session_id) {
             setSessionId(result.session_id);
             setCollabMode(true);
         }
-    };
+    } catch (err) {
+        setError(err.message || 'An error occurred');
+    }
+};
+
 
     const handleSessionJoin = async () => {
         const result = await fetchData('sessions/join-session', { session_id: newSessionId });
