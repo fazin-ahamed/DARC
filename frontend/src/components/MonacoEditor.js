@@ -37,7 +37,9 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
 
             // Format code on load
             newEditor.onDidLayoutChange(() => {
-                newEditor.getAction('editor.action.formatDocument').run();
+                if (newEditor) {
+                    newEditor.getAction('editor.action.formatDocument').run();
+                }
             });
 
             return () => {
@@ -89,14 +91,18 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     useEffect(() => {
         if (editor) {
             editor.updateOptions({ language });
-            editor.getAction('editor.action.formatDocument').run();
+            if (editor) {
+                editor.getAction('editor.action.formatDocument').run();
+            }
         }
     }, [language, editor]);
 
     useEffect(() => {
         if (editor && initialValue !== editor.getValue()) {
             editor.setValue(initialValue);
-            editor.getAction('editor.action.formatDocument').run();
+            if (editor) {
+                editor.getAction('editor.action.formatDocument').run();
+            }
         }
     }, [initialValue, editor]);
 
