@@ -96,19 +96,16 @@ const Dashboard = () => {
         }
     };
 
-
     const handleSessionJoin = async () => {
-    const payload = { session_id: newSessionId.toString() };
-    
-    console.log("Joining session with payload:", payload); // Debugging line
-    
-    const result = await fetchData('sessions/join-session', payload);
-    
-    if (result) {
-        setSessionId(result.session_id.toString());
-        setCollabMode(true);
-    }
-};
+        const payload = { session_id: newSessionId.toString() };
+        console.log("Joining session with payload:", payload); // Debugging line
+        const result = await fetchData('sessions/join-session', payload);
+        if (result) {
+            setSessionId(result.session_id.toString());
+            setCollabMode(true);
+        }
+    };
+
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text)
             .then(() => alert('Session ID copied to clipboard!'))
@@ -130,7 +127,11 @@ const Dashboard = () => {
                 <div>
                     <h2>Session Management</h2>
                     <Button auto onClick={handleSessionCreate}>Create New Session</Button>
-                    <Input placeholder="Enter Session ID" onChange={(e) => setNewSessionId(e.target.value)} />
+                    <Input 
+                        placeholder="Enter Session ID" 
+                        value={newSessionId} 
+                        onChange={(e) => setNewSessionId(e.target.value)} 
+                    />
                     <Button auto onClick={handleSessionJoin}>Join Session</Button>
                 </div>
             ) : (
