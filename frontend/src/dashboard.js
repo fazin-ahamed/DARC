@@ -115,6 +115,13 @@ const Dashboard = () => {
             .catch(err => alert('Failed to copy text: ' + err));
     };
 
+    const handleLanguageChange = (value) => {
+        setLanguage(value);
+        if (window.updateEditorLanguage) {
+            window.updateEditorLanguage(value);
+        }
+    };
+
     return (
         <div className="Dashboard">
             <h1>Code Analysis Dashboard</h1>
@@ -133,7 +140,7 @@ const Dashboard = () => {
                         <Button auto onClick={() => copyToClipboard(sessionId)} style={{ marginLeft: '1rem' }}>Copy</Button>
                     </div>
 
-                    <Select value={language} onChange={(value) => setLanguage(value)}>
+                    <Select value={language} onChange={handleLanguageChange}>
                         {languages.map(lang => (
                             <Select.Option key={lang} value={lang}>
                                 {lang}
