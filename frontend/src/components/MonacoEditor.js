@@ -4,53 +4,57 @@ import * as monaco from 'monaco-editor';
 const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const editorRef = useRef(null);
     const [editor, setEditor] = useState(null);
+    const [websocket, setWebSocket] = useState(null);
 
     useEffect(() => {
-        if (editorRef.current) {
+        if (editorRef.current && !editor) {
             const newEditor = monaco.editor.create(editorRef.current, {
                 value: initialValue || '',
                 language: language,
                 theme: 'vs-dark',
-                automaticLayout: true,  // Ensure proper layout
-                worker: {
-                    url: '../public/monaco-worker.js' // Path to the worker script
-                }
+                automaticLayout: true
             });
             setEditor(newEditor);
-            
-            // Connect to WebSocket server
-            const websocket = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
 
-            websocket.onmessage = (event) => {
+            // WebSocket connection setup
+            const ws = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
+
+            ws.onopen = () => console.log("WebSocket connection opened");
+
+            ws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
                 if (message.sessionId !== sessionId) {
-                    // Update editor content if the message is from another session
                     newEditor.setValue(message.content);
                 }
             };
 
+            ws.onclose = () => console.log("WebSocket connection closed");
+            ws.onerror = (error) => console.error("WebSocket error:", error);
+
+            setWebSocket(ws);
+
             newEditor.onDidChangeModelContent(() => {
                 const content = newEditor.getValue();
                 onChange(content); // Trigger onChange callback
-                websocket.send(JSON.stringify({ sessionId, content }));
+                ws.send(JSON.stringify({ sessionId, content }));
             });
 
-            // Cleanup function
+            // Cleanup function for editor and WebSocket
             return () => {
-                websocket.close();
+                ws.close();
                 newEditor.dispose();
             };
         }
-    }, [sessionId, language, initialValue, onChange]);
+    }, [sessionId, language, initialValue, onChange, editor]);
 
     useEffect(() => {
         if (editor) {
-            editor.updateOptions({ language });
+            monaco.editor.setModelLanguage(editor.getModel(), language);
         }
     }, [language, editor]);
 
     useEffect(() => {
-        if (editor) {
+        if (editor && initialValue !== editor.getValue()) {
             editor.setValue(initialValue);
         }
     }, [initialValue, editor]);
