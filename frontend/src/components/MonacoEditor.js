@@ -25,7 +25,6 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const websocketRef = useRef(null);
 
     useEffect(() => {
-        // Create the Monaco editor
         if (editorRef.current) {
             const newEditor = monaco.editor.create(editorRef.current, {
                 value: initialValue || '',
@@ -46,29 +45,28 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     }, [initialValue, language]);
 
     useEffect(() => {
-    if (editor) {
-        websocketRef.current = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
+        if (editor) {
+            websocketRef.current = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
 
-        websocketRef.current.onopen = () => console.log('WebSocket connection opened');
-        websocketRef.current.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            if (message.sessionId !== sessionId) {
-                editor.setValue(message.content);
-            }
-        };
-        websocketRef.current.onerror = (error) => console.error('WebSocket error:', error);
-        websocketRef.current.onclose = () => console.log('WebSocket connection closed');
+            websocketRef.current.onopen = () => console.log('WebSocket connection opened');
+            websocketRef.current.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                if (message.sessionId !== sessionId) {
+                    editor.setValue(message.content);
+                }
+            };
+            websocketRef.current.onerror = (error) => console.error('WebSocket error:', error);
+            websocketRef.current.onclose = () => console.log('WebSocket connection closed');
 
-        return () => {
-            if (websocketRef.current) {
-                websocketRef.current.close();
-            }
-        };
-    }
-}, [sessionId, editor]);
+            return () => {
+                if (websocketRef.current) {
+                    websocketRef.current.close();
+                }
+            };
+        }
+    }, [sessionId, editor]);
 
     useEffect(() => {
-        // Handle editor content changes
         if (editor) {
             const handleEditorChange = () => {
                 const content = editor.getValue();
@@ -81,13 +79,13 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
             editor.onDidChangeModelContent(handleEditorChange);
 
             return () => {
+                // Correct cleanup: Remove the listener when the component is unmounted or when the editor changes
                 editor.offDidChangeModelContent(handleEditorChange);
             };
         }
     }, [editor, onChange, sessionId]);
 
     useEffect(() => {
-        // Update editor language and format document
         if (editor) {
             editor.updateOptions({ language });
             editor.getAction('editor.action.formatDocument').run();
@@ -95,7 +93,6 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     }, [language, editor]);
 
     useEffect(() => {
-        // Set initial value
         if (editor && initialValue !== editor.getValue()) {
             editor.setValue(initialValue);
             editor.getAction('editor.action.formatDocument').run();
