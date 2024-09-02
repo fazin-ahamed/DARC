@@ -33,15 +33,14 @@
   REACT_APP_LOGIN_URL="https://hook.eu2.make.com/ome0aln75fq428bi35d89lcqs4v4brdp"
   REACT_APP_SIGNUP_URL="https://hook.eu2.make.com/5acfg34p12mmcqw2sl5fdvj4946d9kbr"
 
-[build.publish]
-  # Add custom headers
-  [[headers]]
-    for = "/*"
-    [headers.values]
-      X-Frame-Options = "DENY"
-      X-XSS-Protection = "1; mode=block"
-      X-Content-Type-Options = "nosniff"
-      Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+# Configure custom headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
 
 # Configure the deployment settings for the specific branch (optional)
 [context.production]
