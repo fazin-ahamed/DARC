@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MonacoEditor from './components/MonacoEditor';
-import { Button, Input, Text, Select, CopyButton } from '@geist-ui/core';
+import { Button, Input, Text, Select } from '@geist-ui/core';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -104,6 +104,12 @@ const Dashboard = () => {
         }
     };
 
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => alert('Session ID copied to clipboard!'))
+            .catch(err => alert('Failed to copy text: ' + err));
+    };
+
     return (
         <div className="Dashboard">
             <h1>Code Analysis Dashboard</h1>
@@ -119,7 +125,7 @@ const Dashboard = () => {
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                         <Text>Session ID: {sessionId}</Text>
-                        <CopyButton text={sessionId} style={{ marginLeft: '1rem' }}>Copy</CopyButton>
+                        <Button auto onClick={() => copyToClipboard(sessionId)} style={{ marginLeft: '1rem' }}>Copy</Button>
                     </div>
 
                     <Select value={language} onChange={(value) => setLanguage(value)}>
