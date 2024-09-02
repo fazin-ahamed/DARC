@@ -46,14 +46,14 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     }, [initialValue, language]);
 
     useEffect(() => {
-        // Setup WebSocket connection
+    if (editor) {
         websocketRef.current = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
 
         websocketRef.current.onopen = () => console.log('WebSocket connection opened');
         websocketRef.current.onmessage = (event) => {
             const message = JSON.parse(event.data);
             if (message.sessionId !== sessionId) {
-                editor?.setValue(message.content);
+                editor.setValue(message.content);
             }
         };
         websocketRef.current.onerror = (error) => console.error('WebSocket error:', error);
@@ -64,7 +64,8 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 websocketRef.current.close();
             }
         };
-    }, [sessionId, editor]);
+    }
+}, [sessionId, editor]);
 
     useEffect(() => {
         // Handle editor content changes
