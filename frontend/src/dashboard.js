@@ -54,35 +54,35 @@ const Dashboard = () => {
     };
 
     const handleAnalyze = async () => {
-        const result = await fetchData('analyze', { code: editorValue, language });
+        const result = await fetchData('api/analyze', { code: editorValue, language });
         if (result) {
             setAnalysisResults(result.suggestions);
         }
     };
 
     const handleReview = async () => {
-        const result = await fetchData('review', { code: editorValue, language });
+        const result = await fetchData('api/review', { code: editorValue, language });
         if (result) {
             setReviewComments(result.comments);
         }
     };
 
     const handleOptimize = async () => {
-        const result = await fetchData('optimize', { code: editorValue, language });
+        const result = await fetchData('api/optimize', { code: editorValue, language });
         if (result) {
             setOptimizedCode(result.optimized_code);
         }
     };
 
     const handleComplexity = async () => {
-        const result = await fetchData('complexity', { code: editorValue, language });
+        const result = await fetchData('api/complexity', { code: editorValue, language });
         if (result) {
             setComplexity(result.complexity_score);
         }
     };
 
     const handleProfile = async () => {
-        const result = await fetchData('profile', { code: editorValue, language });
+        const result = await fetchData('api/profile', { code: editorValue, language });
         if (result) {
             setPerformance(result.performance);
         }
@@ -99,10 +99,11 @@ const Dashboard = () => {
     const handleSessionJoin = async () => {
         const result = await fetchData('sessions/join-session', { session_id: newSessionId });
         if (result) {
-            setSessionId(result.session_id);
+             setSessionId(result.session_id);
             setCollabMode(true);
         }
     };
+
 
     return (
         <div className="App">
