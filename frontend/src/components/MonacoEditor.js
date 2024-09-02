@@ -64,7 +64,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 newEditor.dispose();
             };
         }
-    }, [sessionId, language, initialValue, onChange]);
+    }, [sessionId, initialValue, onChange]);
 
     useEffect(() => {
         if (editor) {
@@ -73,7 +73,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     }, [language, editor]);
 
     useEffect(() => {
-        if (editor) {
+        if (editor && initialValue !== editor.getValue()) {
             editor.setValue(initialValue);
         }
     }, [initialValue, editor]);
