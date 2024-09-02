@@ -2,13 +2,13 @@
 
 [build]
   # Set the base directory where your project resides
-  base = "/"
+  base = "frontend"
 
   # Command to build your project
   command = "npm run build"
 
   # Directory where the build output is stored
-  publish = "build"
+  publish = "frontend/build"
 
 # Redirects and rewrites
 [[redirects]]
