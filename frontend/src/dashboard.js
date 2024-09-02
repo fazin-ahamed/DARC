@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MonacoEditor from './components/MonacoEditor';
-import { Button, Input, Text, Select } from '@geist-ui/core';
+import { Button, Input, Text, Select, CopyButton } from '@geist-ui/core';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -54,35 +54,35 @@ const Dashboard = () => {
     };
 
     const handleAnalyze = async () => {
-        const result = await fetchData('api/analyze', { code: editorValue, language });
+        const result = await fetchData('analyze', { code: editorValue, language });
         if (result) {
             setAnalysisResults(result.suggestions);
         }
     };
 
     const handleReview = async () => {
-        const result = await fetchData('api/review', { code: editorValue, language });
+        const result = await fetchData('review', { code: editorValue, language });
         if (result) {
             setReviewComments(result.comments);
         }
     };
 
     const handleOptimize = async () => {
-        const result = await fetchData('api/optimize', { code: editorValue, language });
+        const result = await fetchData('optimize', { code: editorValue, language });
         if (result) {
             setOptimizedCode(result.optimized_code);
         }
     };
 
     const handleComplexity = async () => {
-        const result = await fetchData('api/complexity', { code: editorValue, language });
+        const result = await fetchData('complexity', { code: editorValue, language });
         if (result) {
             setComplexity(result.complexity_score);
         }
     };
 
     const handleProfile = async () => {
-        const result = await fetchData('api/profile', { code: editorValue, language });
+        const result = await fetchData('profile', { code: editorValue, language });
         if (result) {
             setPerformance(result.performance);
         }
@@ -99,16 +99,15 @@ const Dashboard = () => {
     const handleSessionJoin = async () => {
         const result = await fetchData('sessions/join-session', { session_id: newSessionId });
         if (result) {
-             setSessionId(result.session_id);
+            setSessionId(result.session_id);
             setCollabMode(true);
         }
     };
 
-
     return (
-        <div className="App">
+        <div className="Dashboard">
             <h1>Code Analysis Dashboard</h1>
-            
+
             {!collabMode ? (
                 <div>
                     <h2>Session Management</h2>
@@ -118,6 +117,11 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                        <Text>Session ID: {sessionId}</Text>
+                        <CopyButton text={sessionId} style={{ marginLeft: '1rem' }}>Copy</CopyButton>
+                    </div>
+
                     <Select value={language} onChange={(value) => setLanguage(value)}>
                         {languages.map(lang => (
                             <Select.Option key={lang} value={lang}>
@@ -125,14 +129,14 @@ const Dashboard = () => {
                             </Select.Option>
                         ))}
                     </Select>
-                    
+
                     <MonacoEditor
                         sessionId={sessionId}
                         language={language}
                         initialValue={editorValue}
                         onChange={(value) => setEditorValue(value)}
                     />
-                    
+
                     <Button auto onClick={handleAnalyze}>Analyze Code</Button>
                     <Button auto onClick={handleReview}>Review Code</Button>
                     <Button auto onClick={handleOptimize}>Optimize Code</Button>
