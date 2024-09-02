@@ -23,6 +23,7 @@ window.MonacoEnvironment = {
 const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const editorRef = useRef(null);
     const [editor, setEditor] = useState(null);
+    const websocketRef = useRef(null);  // Store WebSocket instance in ref to persist across renders
 
     useEffect(() => {
         if (editorRef.current) {
@@ -35,27 +36,31 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
 
             setEditor(newEditor);
 
-            // WebSocket setup
-            const websocket = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
-            
-            websocket.onopen = () => console.log('WebSocket connection opened');
-            websocket.onmessage = (event) => {
+            // Initialize WebSocket connection using sessionId
+            websocketRef.current = new WebSocket(`wss://darc-backendonly.onrender.com/ws/${sessionId}`);
+
+            websocketRef.current.onopen = () => console.log('WebSocket connection opened');
+            websocketRef.current.onmessage = (event) => {
                 const message = JSON.parse(event.data);
                 if (message.sessionId !== sessionId) {
                     newEditor.setValue(message.content);
                 }
             };
-            websocket.onerror = (error) => console.error('WebSocket error:', error);
-            websocket.onclose = () => console.log('WebSocket connection closed');
+            websocketRef.current.onerror = (error) => console.error('WebSocket error:', error);
+            websocketRef.current.onclose = () => console.log('WebSocket connection closed');
 
             newEditor.onDidChangeModelContent(() => {
                 const content = newEditor.getValue();
                 onChange(content);
-                websocket.send(JSON.stringify({ sessionId, content }));
+                if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+                    websocketRef.current.send(JSON.stringify({ sessionId, content }));
+                }
             });
 
             return () => {
-                websocket.close();
+                if (websocketRef.current) {
+                    websocketRef.current.close();
+                }
                 newEditor.dispose();
             };
         }
