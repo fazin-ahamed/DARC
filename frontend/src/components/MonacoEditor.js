@@ -3,7 +3,6 @@ import * as monaco from 'monaco-editor';
 
 const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
     const editorRef = useRef(null);
-    const editorInstance = useRef(null);
     const [editor, setEditor] = useState(null);
 
     useEffect(() => {
@@ -12,6 +11,7 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 value: initialValue || '',
                 language: language,
                 theme: 'vs-dark',
+                automaticLayout: true,  // Ensure proper layout
             });
             setEditor(newEditor);
             
@@ -32,12 +32,25 @@ const MonacoEditor = ({ sessionId, language, initialValue, onChange }) => {
                 websocket.send(JSON.stringify({ sessionId, content }));
             });
 
+            // Cleanup function
             return () => {
                 websocket.close();
                 newEditor.dispose();
             };
         }
     }, [sessionId, language, initialValue, onChange]);
+
+    useEffect(() => {
+        if (editor) {
+            editor.updateOptions({ language });
+        }
+    }, [language, editor]);
+
+    useEffect(() => {
+        if (editor) {
+            editor.setValue(initialValue);
+        }
+    }, [initialValue, editor]);
 
     return <div ref={editorRef} style={{ height: '500px', width: '100%' }} />;
 };
