@@ -1,0 +1,48 @@
+# netlify.toml
+
+[build]
+  # Set the base directory where your project resides
+  base = "/"
+
+  # Command to build your project
+  command = "npm run build"
+
+  # Directory where the build output is stored
+  publish = "build"
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/api/*"
+  to = "https://darc-backendonly.onrender.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/monaco-worker.js"
+  to = "/public/monaco-worker.js"
+  status = 200
+
+[[redirects]]
+  from = "/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[build.environment]
+  # Environment variables
+  REACT_APP_API_URL = "https://darc-backendonly.onrender.com"
+
+[build.publish]
+  # Add custom headers
+  [[headers]]
+    for = "/*"
+    [headers.values]
+      X-Frame-Options = "DENY"
+      X-XSS-Protection = "1; mode=block"
+      X-Content-Type-Options = "nosniff"
+      Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+
+# Configure the deployment settings for the specific branch (optional)
+[context.production]
+  command = "npm run build"
+  publish = "build"
+  environment = { NODE_ENV = "production" }
