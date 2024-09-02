@@ -15,9 +15,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run copy-monaco-workers",
+    "build": "react-scripts build && npm run copy-monaco-files",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "copy-monaco-files": "cp -r node_modules/monaco-editor/min/monacoeditor build/monacoeditor"
+    "copy-monaco-files": "cp -r node_modules/monaco-editor/min/monacoeditor build/monacoeditor",
   }
 }
