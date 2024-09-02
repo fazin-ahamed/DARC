@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const response = await axios.post(`${process.env.REACT_APP_SIGNUP_URL}`, { username, email, password });
             localStorage.setItem('token', response.data.access_token);
-            history.push('/login');
+            navigate('/login');
         } catch (error) {
             console.error('Signup failed:', error);
         }

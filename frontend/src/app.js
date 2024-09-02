@@ -1,12 +1,15 @@
 import React from 'react';
-import ErrorBoundary from './errorboundary'; // Adjust the path as needed
-import Dashboard from './dashboard'; // Adjust the path as needed
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import App from './app'; // Rename if necessary
+import Dashboard from './dashboard'; // Import your Dashboard component
 
-const App = () => (
-    <ErrorBoundary>
-        <Dashboard />
-    </ErrorBoundary>
+const AppRouter = () => (
+    <Router>
+        <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+    </Router>
 );
 
-export default App;
-
+export default AppRouter;

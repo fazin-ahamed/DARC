@@ -95,3 +95,6 @@ pre {
     overflow-x: auto;
 }
 
+.link-spacing {
+  margin-right: 10px; /* Adjust the value as needed */
+}

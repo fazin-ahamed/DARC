@@ -1,48 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Page, Textarea, Select, Button, Text, Card, Divider } from '@geist-ui/core';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import React, { useState } from 'react';
+import MonacoEditor from './components/MonacoEditor';
+import { Button, Input, Text, Select } from '@geist-ui/core';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const Dashboard = () => {
-    const [code, setCode] = useState('');
-    const [language, setLanguage] = useState('python');
+    const [language, setLanguage] = useState('javascript');
+    const [editorValue, setEditorValue] = useState('');
     const [analysisResults, setAnalysisResults] = useState(null);
     const [complexity, setComplexity] = useState(null);
     const [reviewComments, setReviewComments] = useState(null);
     const [performance, setPerformance] = useState(null);
     const [optimizedCode, setOptimizedCode] = useState('');
     const [error, setError] = useState(null);
+    const [sessionId, setSessionId] = useState('');
+    const [newSessionId, setNewSessionId] = useState('');
+    const [collabMode, setCollabMode] = useState(false);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+    const languages = [
+        'javascript',
+        'python',
+        'java',
+        'csharp',
+        'ruby',
+        'go',
+        'typescript',
+        'php',
+        'html',
+        'css'
+    ];
 
-    function reformatContent(content) {
-        if (typeof content === 'string') {
-            let formattedContent = content.replace(/\\n/g, ' ');
-            formattedContent = formattedContent.replace(/\\\\/g, '');
-            formattedContent = formattedContent.replace(/\s+/g, ' ').trim();
-            return formattedContent;
-        }
-        console.warn('Expected string but received:', content);
-        return content;
-    }
-
-    function reformatCode(content) {
-        if (typeof content === 'string') {
-            let formattedCode = content.replace(/\\n/g, '\n');
-            formattedCode = formattedCode.replace(/\\\\/g, '\\');
-            formattedCode = formattedCode.replace(/(;|{|}|:)/g, '$1\n');
-            formattedCode = formattedCode.replace(/\n\s*\n/g, '\n');
-            formattedCode = formattedCode.trim();
-            return formattedCode;
-        }
-        console.warn('Expected string but received:', content);
-        return content;
-    }
-
-    async function fetchData(url, method, body) {
+    const fetchData = async (endpoint, body) => {
         try {
-            const response = await fetch(url, {
-                method,
+            const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -54,135 +45,154 @@ const Dashboard = () => {
                 throw new Error(errorData.error || 'Unknown error');
             }
 
-            return await response.json();
+            const data = await response.json();
+            return data;
         } catch (err) {
-            console.error('Fetch error:', err);
             setError(err.message || 'An error occurred');
             return null;
         }
-    }
-
-    const handleAnalyze = async () => {
-        const result = await fetchData(`${API_BASE_URL}/analyze`, 'POST', { code, language });
-        if (result) {
-            const formattedSuggestions = reformatContent(result.suggestions);
-            setAnalysisResults(formattedSuggestions);
-        }
     };
 
-    const handleComplexity = async () => {
-        const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
+    const handleAnalyze = async () => {
+        const result = await fetchData('api/analyze', { code: editorValue, language });
         if (result) {
-            const formattedComplexityCode = reformatCode(result.complexity_score);
-            setComplexity(formattedComplexityCode);
+            setAnalysisResults(result.suggestions);
         }
     };
 
     const handleReview = async () => {
-        const result = await fetchData(`${API_BASE_URL}/review`, 'POST', { code, language });
+        const result = await fetchData('api/review', { code: editorValue, language });
         if (result) {
-            const formattedComments = reformatContent(result.comments);
-            setReviewComments(formattedComments);
+            setReviewComments(result.comments);
         }
     };
 
     const handleOptimize = async () => {
-        const result = await fetchData(`${API_BASE_URL}/optimize`, 'POST', { code, language });
+        const result = await fetchData('api/optimize', { code: editorValue, language });
         if (result) {
-            let optimizedCodeContent = result.optimized_code;
-            if (typeof optimizedCodeContent !== 'string') {
-                optimizedCodeContent = JSON.stringify(optimizedCodeContent);
-            }
-            // Remove surrounding triple backticks
-            optimizedCodeContent = optimizedCodeContent.replace(/(^```[a-z]*\n|\n```$)/g, '');
-            const formattedOptimizedCode = reformatCode(optimizedCodeContent);
-            setOptimizedCode(formattedOptimizedCode);
+            setOptimizedCode(result.optimized_code);
+        }
+    };
+
+    const handleComplexity = async () => {
+        const result = await fetchData('api/complexity', { code: editorValue, language });
+        if (result) {
+            setComplexity(result.complexity_score);
         }
     };
 
     const handleProfile = async () => {
-        const result = await fetchData(`${API_BASE_URL}/profile`, 'POST', { code, language });
+        const result = await fetchData('api/profile', { code: editorValue, language });
         if (result) {
-            const formattedProfileCode = reformatCode(result.performance);
-            setPerformance(formattedProfileCode);
+            setPerformance(result.performance);
         }
     };
 
+    const handleSessionCreate = async () => {
+        const result = await fetchData('sessions/create-session', {});
+        if (result) {
+            setSessionId(result.session_id);
+            setCollabMode(true);
+        }
+    };
+
+
+    const handleSessionJoin = async () => {
+    const payload = { session_id: newSessionId.toString() };
+    
+    console.log("Joining session with payload:", payload); // Debugging line
+    
+    const result = await fetchData('sessions/join-session', payload);
+    
+    if (result) {
+        setSessionId(result.session_id.toString());
+        setCollabMode(true);
+    }
+};
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => alert('Session ID copied to clipboard!'))
+            .catch(err => alert('Failed to copy text: ' + err));
+    };
+
     return (
-        <Page>
-            <Text h1>Code Analysis Dashboard</Text>
-            <Textarea
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder="Enter your code here"
-                rows="10"
-                width="100%"
-            />
-            <Select
-                value={language}
-                onChange={setLanguage}
-                placeholder="Select Language"
-                width="100%"
-            >
-                <Select.Option value="python">Python</Select.Option>
-                <Select.Option value="java">Java</Select.Option>
-                <Select.Option value="javascript">JavaScript</Select.Option>
-                <Select.Option value="go">Go</Select.Option>
-                <Select.Option value="ruby">Ruby</Select.Option>
-                <Select.Option value="php">PHP</Select.Option>
-            </Select>
-            <Button auto onClick={handleAnalyze}>Analyze Code</Button>
-            <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
-            <Button auto onClick={handleReview}>Review Code</Button>
-            <Button auto onClick={handleOptimize}>Optimize Code</Button>
-            <Button auto onClick={handleProfile}>Profile Code Performance</Button>
+        <div className="Dashboard">
+            <h1>Code Analysis Dashboard</h1>
 
-            {error && (
-                <Card shadow type="error">
-                    <Text h2>Error</Text>
-                    <Text>{error}</Text>
-                </Card>
+            {!collabMode ? (
+                <div>
+                    <h2>Session Management</h2>
+                    <Button auto onClick={handleSessionCreate}>Create New Session</Button>
+                    <Input placeholder="Enter Session ID" onChange={(e) => setNewSessionId(e.target.value)} />
+                    <Button auto onClick={handleSessionJoin}>Join Session</Button>
+                </div>
+            ) : (
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                        <Text>Session ID: {sessionId}</Text>
+                        <Button auto onClick={() => copyToClipboard(sessionId)} style={{ marginLeft: '1rem' }}>Copy</Button>
+                    </div>
+
+                    <Select value={language} onChange={(value) => setLanguage(value)}>
+                        {languages.map(lang => (
+                            <Select.Option key={lang} value={lang}>
+                                {lang}
+                            </Select.Option>
+                        ))}
+                    </Select>
+
+                    <MonacoEditor
+                        sessionId={sessionId}
+                        language={language}
+                        initialValue={editorValue}
+                        onChange={(value) => setEditorValue(value)}
+                    />
+
+                    <Button auto onClick={handleAnalyze}>Analyze Code</Button>
+                    <Button auto onClick={handleReview}>Review Code</Button>
+                    <Button auto onClick={handleOptimize}>Optimize Code</Button>
+                    <Button auto onClick={handleComplexity}>Analyze Complexity</Button>
+                    <Button auto onClick={handleProfile}>Profile Code Performance</Button>
+
+                    {error && <Text>{`Error: ${error}`}</Text>}
+
+                    {analysisResults && (
+                        <div>
+                            <h2>Code Analysis Results</h2>
+                            <pre>{JSON.stringify(analysisResults, null, 2)}</pre>
+                        </div>
+                    )}
+
+                    {reviewComments && (
+                        <div>
+                            <h2>Code Review Comments</h2>
+                            <pre>{JSON.stringify(reviewComments, null, 2)}</pre>
+                        </div>
+                    )}
+
+                    {complexity && (
+                        <div>
+                            <h2>Code Complexity</h2>
+                            <pre>{JSON.stringify(complexity, null, 2)}</pre>
+                        </div>
+                    )}
+
+                    {optimizedCode && (
+                        <div>
+                            <h2>Optimized Code</h2>
+                            <pre>{optimizedCode}</pre>
+                        </div>
+                    )}
+
+                    {performance && (
+                        <div>
+                            <h2>Code Performance Profile</h2>
+                            <pre>{JSON.stringify(performance, null, 2)}</pre>
+                        </div>
+                    )}
+                </div>
             )}
-
-            {analysisResults && (
-                <Card shadow>
-                    <Text h2>Code Analysis</Text>
-                    <Text>{JSON.stringify(analysisResults, null, 2)}</Text>
-                </Card>
-            )}
-
-            {complexity && (
-                <Card shadow>
-                    <Text h2>Code Complexity</Text>
-                    <Text>{JSON.stringify(complexity, null, 2)}</Text>
-                </Card>
-            )}
-
-            {reviewComments && (
-                <Card shadow>
-                    <Text h2>Code Review Comments</Text>
-                    <Text>{JSON.stringify(reviewComments, null, 2)}</Text>
-                </Card>
-            )}
-
-            {optimizedCode && (
-                <Card shadow>
-                    <Text h2>Optimized Code</Text>
-                    <SyntaxHighlighter language={language} style={nightOwl}>
-                        {optimizedCode}
-                    </SyntaxHighlighter>
-                </Card>
-            )}
-
-            {performance && (
-                <Card shadow>
-                    <Text h2>Code Performance</Text>
-                    <Text>{JSON.stringify(performance, null, 2)}</Text>
-                </Card>
-            )}
-
-            <Divider />
-        </Page>
+        </div>
     );
 };
 
