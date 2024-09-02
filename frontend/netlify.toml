@@ -40,7 +40,6 @@
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://darc-backendonly.onrender.com;"
 
 # Configure the deployment settings for the specific branch (optional)
 [context.production]
