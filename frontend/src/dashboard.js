@@ -17,6 +17,29 @@ const Dashboard = () => {
     console.log('API_BASE_URL:', API_BASE_URL);// Debugging line
     console.log('API_URL:', process.env.REACT_APP_API_URL);
 
+    function formatAnalysisResults(content) {
+    if (typeof content === 'string') {
+        // Replace escape sequences and format JSON-like structures if needed
+        let formattedResults = content.replace(/\\n/g, '\n'); // Replace newline characters
+        formattedResults = formattedResults.replace(/\\\\/g, '\\'); // Handle escaped backslashes
+        formattedResults = formattedResults.replace(/\s+/g, ' ').trim(); // Trim and normalize whitespace
+        return formattedResults;
+    }
+    console.warn('Expected string but received:', content);
+    return content;
+}
+
+    function formatReviewComments(content) {
+    if (typeof content === 'string') {
+        // Format multiline comments and handle any escape sequences
+        let formattedComments = content.replace(/\\n/g, '\n');
+        formattedComments = formattedComments.replace(/\s+/g, ' ').trim();
+        return formattedComments;
+    }
+    console.warn('Expected string but received:', content);
+    return content;
+}
+    
     function reformatContent(content) {
     if (typeof content === 'string') {
         // Handle escaped newlines, extra slashes, and whitespace cleanup
@@ -29,7 +52,7 @@ const Dashboard = () => {
     return content;
 }
 
-function reformatCode(content) {
+    function reformatCode(content) {
     if (typeof content === 'string') {
         // Handle newline and escape sequences correctly
         let formattedCode = content.replace(/\\n/g, '\n');
@@ -60,59 +83,61 @@ function formatProfilingData(content) {
 
 
     async function fetchData(url, method, body) {
-        try {
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
-            });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Unknown error');
-            }
-    
-            const text = await response.text();
-            if (!text) {
-                throw new Error('Received empty response');
-            }
-    
-            try {
-                return JSON.parse(text);
-            } catch (err) {
-                console.error('Failed to parse JSON:', text);
-                throw new Error('Failed to parse JSON');
-            }
-        } catch (err) {
-            console.error('Fetch error:', err);
-            setError(err.message || 'An error occurred');
-            return null;
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Unknown error');
         }
+
+        const text = await response.text();
+        if (!text) {
+            throw new Error('Received empty response');
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch (err) {
+            console.error('Failed to parse JSON:', text);
+            throw new Error('Failed to parse JSON');
+        }
+    } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message || 'An error occurred');
+        return null;
     }
+}
+
 
     const handleAnalyze = async () => {
-        const result = await fetchData(`${API_BASE_URL}/analyze`, 'POST', { code, language });
+    const result = await fetchData(`${API_BASE_URL}/analyze`, 'POST', { code, language });
+    if (result) {
+        const formattedSuggestions = formatAnalysisResults(result.suggestions);
+        setAnalysisResults(formattedSuggestions);
+    }
+};
+
+    const handleReview = async () => {
+        const result = await fetchData(`${API_BASE_URL}/review`, 'POST', { code, language });
         if (result) {
-            const formattedSuggestions = reformatContent(result.suggestions);
-            setAnalysisResults(formattedSuggestions);
-        }
-    };
+            const formattedComments = formatReviewComments(result.comments);
+            setReviewComments(formattedComments);
+    }
+};
+
 
     const handleComplexity = async () => {
         const result = await fetchData(`${API_BASE_URL}/complexity`, 'POST', { code, language });
         if (result) {
             const formattedComplexityCode = reformatCode(result.complexity_score);
             setComplexity(formattedComplexityCode);
-        }
-    };
-
-    const handleReview = async () => {
-        const result = await fetchData(`${API_BASE_URL}/review`, 'POST', { code, language });
-        if (result) {
-            const formattedComments = reformatContent(result.comments);
-            setReviewComments(formattedComments);
         }
     };
 
@@ -176,22 +201,27 @@ function formatProfilingData(content) {
 
             {analysisResults && (
                 <Card shadow>
-                    <Text h2>Code Analysis</Text>
-                    <Text>{JSON.stringify(analysisResults, null, 2)}</Text>
-                </Card>
-            )}
-
-            {complexity && (
-                <Card shadow>
-                    <Text h2>Code Complexity</Text>
-                    <Text>{JSON.stringify(complexity, null, 2)}</Text>
+                    <Text h2>Code Analysis Results</Text>
+                    <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                        {formatAnalysisResults(analysisResults)}
+                    </pre>
                 </Card>
             )}
 
             {reviewComments && (
                 <Card shadow>
                     <Text h2>Code Review Comments</Text>
-                    <Text>{JSON.stringify(reviewComments, null, 2)}</Text>
+                    <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                        {formatReviewComments(reviewComments)}
+                    </pre>
+                </Card>
+            )}
+
+
+            {complexity && (
+                <Card shadow>
+                    <Text h2>Code Complexity</Text>
+                    <Text>{JSON.stringify(complexity, null, 2)}</Text>
                 </Card>
             )}
 
